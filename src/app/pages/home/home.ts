@@ -5,11 +5,13 @@ import { AlertController, IonList, IonRouterOutlet, LoadingController, ModalCont
 import { ScheduleFilterPage } from '../schedule-filter/schedule-filter';
 import { ConferenceData } from '../../providers/conference-data';
 import { UserData } from '../../providers/user-data';
+import { ApiService } from '../../services/api.service';
+import { IHabits } from '../../interfaces/habits';
 
 @Component({
   selector: 'page-schedule',
-  templateUrl: 'schedule.html',
-  styleUrls: ['./schedule.scss'],
+  templateUrl: 'home.html',
+  styleUrls: ['./home.scss'],
 })
 export class SchedulePage implements OnInit {
   // Gets a reference to the list element
@@ -25,6 +27,23 @@ export class SchedulePage implements OnInit {
   confDate: string;
   showSearchbar: boolean;
 
+  public testUser = "62f83916918a55c6973b40b7"
+
+  public publications = [
+    {
+      id: "1",
+      title: "13/02/2003",
+      description: "7 cups because my girlfriend is a vegetarian",
+      customProperties: [
+        {
+          key: "Better points",
+          value: "Best redaction"
+        }
+      ]
+    }
+  ]
+  public habits: IHabits[] = []
+
   constructor(
     public alertCtrl: AlertController,
     public confData: ConferenceData,
@@ -34,25 +53,29 @@ export class SchedulePage implements OnInit {
     public routerOutlet: IonRouterOutlet,
     public toastCtrl: ToastController,
     public user: UserData,
-    public config: Config
+    public config: Config,
+    private api: ApiService
   ) { }
 
   ngOnInit() {
-    this.updateSchedule();
+    this.updateHabits();
 
     this.ios = this.config.get('mode') === 'ios';
   }
 
-  updateSchedule() {
+  async updateHabits() {
     // Close any open sliding items when the schedule updates
-    if (this.scheduleList) {
-      this.scheduleList.closeSlidingItems();
-    }
+    // if (this.scheduleList) {
+    //   this.scheduleList.closeSlidingItems();
+    // }
 
-    this.confData.getTimeline(this.dayIndex, this.queryText, this.excludeTracks, this.segment).subscribe((data: any) => {
-      this.shownSessions = data.shownSessions;
-      this.groups = data.groups;
-    });
+    // this.confData.getTimeline(this.dayIndex, this.queryText, this.excludeTracks, this.segment).subscribe((data: any) => {
+    //   this.shownSessions = data.shownSessions;
+    //   this.groups = data.groups;
+    //   console.log(this.groups)
+    // });
+
+    this.habits = await this.api.ListHabits(this.testUser);
   }
 
   async presentFilter() {
@@ -67,7 +90,7 @@ export class SchedulePage implements OnInit {
     const { data } = await modal.onWillDismiss();
     if (data) {
       this.excludeTracks = data;
-      this.updateSchedule();
+      this.updateHabits();
     }
   }
 
@@ -116,7 +139,7 @@ export class SchedulePage implements OnInit {
           handler: () => {
             // they want to remove this session from their favorites
             this.user.removeFavorite(sessionData.name);
-            this.updateSchedule();
+            this.updateHabits();
 
             // close the sliding item and hide the option buttons
             slidingItem.close();
