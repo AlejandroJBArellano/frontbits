@@ -1,0 +1,14 @@
+ion-textarea{
+  overflow-y: hidden;
+
+  div{
+    textarea::-webkit-scrollbar{
+      display: none;
+    }
+    textarea{
+      scrollbar-width: none;
+  overflow-y: hidden;
+
+    }
+  }
+}

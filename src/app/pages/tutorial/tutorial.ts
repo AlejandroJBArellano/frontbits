@@ -1,15 +1,15 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, ChangeDetectorRef } from "@angular/core";
+import { Router } from "@angular/router";
 
-import { MenuController } from '@ionic/angular';
+import { MenuController } from "@ionic/angular";
 
-import { Storage } from '@ionic/storage';
-import Swiper from 'swiper';
+import { Storage } from "@ionic/storage-angular";
+import Swiper from "swiper";
 
 @Component({
-  selector: 'page-tutorial',
-  templateUrl: 'tutorial.html',
-  styleUrls: ['./tutorial.scss'],
+  selector: "page-tutorial",
+  templateUrl: "tutorial.html",
+  styleUrls: ["./tutorial.scss"],
 })
 export class TutorialPage {
   showSkip = true;
@@ -24,8 +24,8 @@ export class TutorialPage {
 
   startApp() {
     this.router
-      .navigateByUrl('/app/tabs/schedule', { replaceUrl: true })
-      .then(() => this.storage.set('ion_did_tutorial', true));
+      .navigateByUrl("/app/tabs/schedule", { replaceUrl: true })
+      .then(() => this.storage.set("ion_did_tutorial", true));
   }
 
   setSwiperInstance(swiper: Swiper) {
@@ -38,9 +38,9 @@ export class TutorialPage {
   }
 
   ionViewWillEnter() {
-    this.storage.get('ion_did_tutorial').then(res => {
+    this.storage.get("ion_did_tutorial").then((res) => {
       if (res === true) {
-        this.router.navigateByUrl('/app/tabs/schedule', { replaceUrl: true });
+        this.router.navigateByUrl("/app/tabs/schedule", { replaceUrl: true });
       }
     });
 

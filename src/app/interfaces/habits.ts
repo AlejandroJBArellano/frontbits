@@ -1,4 +1,4 @@
-export interface IHabits {
+export interface IHabit {
   title: string;
   description: string;
   publicationIds: {
@@ -6,4 +6,5 @@ export interface IHabits {
     ref?: unknown;
   }[];
   userId?: string | undefined;
+  _id?: string | undefined;
 }

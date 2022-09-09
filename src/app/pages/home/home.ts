@@ -6,7 +6,7 @@ import { ScheduleFilterPage } from '../schedule-filter/schedule-filter';
 import { ConferenceData } from '../../providers/conference-data';
 import { UserData } from '../../providers/user-data';
 import { ApiService } from '../../services/api.service';
-import { IHabits } from '../../interfaces/habits';
+import { IHabit } from '../../interfaces/habits';
 
 @Component({
   selector: 'page-schedule',
@@ -42,7 +42,7 @@ export class SchedulePage implements OnInit {
       ]
     }
   ]
-  public habits: IHabits[] = []
+  public habits: IHabit[] = []
 
   constructor(
     public alertCtrl: AlertController,
