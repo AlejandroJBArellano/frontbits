@@ -44,10 +44,12 @@ export class ApiService {
     });
   }
   GetGraphicsRating(id: string) {
-    const params = new HttpParams().set("id", id);
-    return this.http.get(this.concatenateUrl("/user/graphics/"), {
-      params,
-    });
+    const params = new HttpParams().set("userId", id);
+    return this.http
+      .get(this.concatenateUrl("/graphics/rating"), {
+        params,
+      })
+      .toPromise();
   }
 
   CreatePublication(publication: any) {

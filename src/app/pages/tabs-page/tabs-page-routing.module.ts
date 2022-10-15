@@ -66,7 +66,7 @@ const routes: Routes = [
           {
             path: "",
             loadChildren: () =>
-              import("../about/about.module").then((m) => m.AboutModule),
+              import("../graphics/about.module").then((m) => m.AboutModule),
           },
         ],
       },
