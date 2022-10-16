@@ -13,7 +13,7 @@ import { DOCUMENT } from "@angular/common";
 import { darkStyle } from "./map-dark-style";
 import { ApiService } from "../../services/api.service";
 import { IHabit } from "../../interfaces/habits";
-import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { FormArray, UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
 
 @Component({
   selector: "page-map",
@@ -23,8 +23,8 @@ import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 export class CreatePage implements AfterViewInit, OnInit {
   @ViewChild("mapCanvas", { static: true }) mapElement: ElementRef;
   public max = new Date().toISOString();
-  public publicationForm: FormGroup;
-  public habitForm: FormGroup;
+  public publicationForm: UntypedFormGroup;
+  public habitForm: UntypedFormGroup;
   public ios: boolean;
   public segment = "publication";
   public habits: IHabit[] = [];
@@ -44,7 +44,7 @@ export class CreatePage implements AfterViewInit, OnInit {
     public platform: Platform,
     public config: Config,
     private api: ApiService,
-    public formBuilder: FormBuilder
+    public formBuilder: UntypedFormBuilder
   ) {
     this.publicationForm = formBuilder.group({
       habitId: ["", Validators.required],

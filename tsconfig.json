@@ -9,11 +9,15 @@
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es2015",
+    "target": "es2020",
     "skipLibCheck": true,
     "lib": [
       "es2017",
       "dom"
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "tslib": ["path/to/node_modules/tslib/tslib.d.ts"]
+    }
   }
 }

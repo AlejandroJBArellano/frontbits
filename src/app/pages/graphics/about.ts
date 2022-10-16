@@ -4,6 +4,7 @@ import { PopoverController } from "@ionic/angular";
 import { ApiService } from "../../services/api.service";
 
 import { PopoverPage } from "../about-popover/about-popover";
+import { EChartsOption } from "echarts";
 
 @Component({
   selector: "page-about",
@@ -17,6 +18,9 @@ export class AboutPage implements OnInit {
   selectOptions = {
     header: "Select a Location",
   };
+  declare echartInstance;
+
+  declare chartOption: EChartsOption;
 
   private userId = this.apiService.GetActualUserId();
 
@@ -26,8 +30,24 @@ export class AboutPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.apiService.GetGraphicsRating(this.userId).then((e) => {
+    this.apiService.GetGraphicsRating(this.userId).then((e: any) => {
       console.log(e);
+      this.chartOption = {
+        xAxis: {
+          type: "category",
+          data: e?.user_rating?.map((obj) => obj.createdAt.slice(0, 10)),
+        },
+        yAxis: {
+          type: "value",
+        },
+        series: [
+          {
+            data: e?.user_rating?.map((obj) => obj.rate),
+            type: "line",
+          },
+        ],
+      };
+      console.log(this.chartOption);
     });
   }
 
@@ -37,5 +57,9 @@ export class AboutPage implements OnInit {
       event,
     });
     await popover.present();
+  }
+
+  public onChartInit(ec) {
+    this.echartInstance = ec;
   }
 }

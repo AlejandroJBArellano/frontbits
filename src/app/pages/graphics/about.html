@@ -11,6 +11,7 @@
       </ion-buttons>
     </ion-toolbar>
   </ion-header>
+  <div echarts [options]="chartOption" class="demo-chart" (chartInit)="onChartInit($event)"></div>
 
   <!-- <div class="about-header">
     Instead of loading an image each time the select changes, use opacity to transition them
