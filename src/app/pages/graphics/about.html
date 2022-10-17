@@ -12,6 +12,16 @@
       </ion-buttons>
     </ion-toolbar>
   </ion-header>
+  <ion-list>
+    <ion-item>
+      <ion-select
+        placeholder="Select Habit"
+        (ionChange)="onChange($event)"
+      >
+        <ion-select-option *ngFor="let habit of habits" value={{habit._id}}>{{habit.title}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
   <div echarts [options]="chartOption" class="demo-chart" (chartInit)="onChartInit($event)"></div>
 
   <!-- <div class="about-header">

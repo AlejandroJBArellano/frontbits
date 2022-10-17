@@ -5,6 +5,7 @@ import { ApiService } from "../../services/api.service";
 
 import { PopoverPage } from "../about-popover/about-popover";
 import { EChartsOption } from "echarts";
+import { IHabit } from "src/app/interfaces/habits";
 
 @Component({
   selector: "page-about",
@@ -22,6 +23,8 @@ export class AboutPage implements OnInit {
 
   declare chartOption: EChartsOption;
 
+  declare habits: IHabit[];
+
   private userId = this.apiService.GetActualUserId();
 
   constructor(
@@ -29,9 +32,17 @@ export class AboutPage implements OnInit {
     private apiService: ApiService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.fetchData();
+  }
+
+  public async fetchData() {
+    this.habits = await this.apiService.ListHabits(this.userId);
+    this.initializeChart();
+  }
+
+  public initializeChart() {
     this.apiService.GetGraphicsRating(this.userId).then((e: any) => {
-      console.log(e);
       this.chartOption = {
         xAxis: {
           type: "category",
@@ -47,7 +58,6 @@ export class AboutPage implements OnInit {
           },
         ],
       };
-      console.log(this.chartOption);
     });
   }
 
@@ -61,5 +71,9 @@ export class AboutPage implements OnInit {
 
   public onChartInit(ec) {
     this.echartInstance = ec;
+  }
+
+  public onChange($event: any) {
+    console.log($event);
   }
 }
