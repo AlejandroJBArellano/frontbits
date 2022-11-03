@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
-import { TabsPage } from "./tabs-page";
 import { SchedulePage } from "../home/home";
+import { TabsPage } from "./tabs-page";
 
 const routes: Routes = [
   {
@@ -25,7 +25,7 @@ const routes: Routes = [
         ],
       },
       {
-        path: "speakers",
+        path: "publications",
         children: [
           {
             path: "",
@@ -61,7 +61,7 @@ const routes: Routes = [
         ],
       },
       {
-        path: "about",
+        path: "graphics",
         children: [
           {
             path: "",

@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
     {
       title: "Publications",
       url: "/app/tabs/publications",
-      icon: "paper",
+      icon: "timer",
     },
     {
       title: "Create",
