@@ -23,10 +23,27 @@
       </ion-select>
     </ion-item>
   </ion-list>
-  <div echarts [options]="chartOption" class="demo-chart" (chartInit)="onChartInit($event)" *ngIf="!noPublicationWarning"></div>
+  <div echarts id="chart" [options]="chartOption" class="demo-chart" (chartInit)="onChartInit($event)" *ngIf="!noPublicationWarning"></div>
   <ion-text color="dark" *ngIf="noPublicationWarning">
     <h3 style="text-align: center;">{{noPublicationWarning}}</h3>
   </ion-text>
+  <ion-row>
+    <ion-col size="6">
+      <ion-button (click)="export('png')" expand="block" fill="solid" size="large" shape="round" *ngIf="!noPublicationWarning">
+        Download Graphic to PNG
+      </ion-button>
+    </ion-col>
+    <ion-col size="6">
+      <ion-button (click)="export('pdf')" expand="block" fill="solid" size="large" shape="round" *ngIf="!noPublicationWarning">
+        Download Graphic to PDF
+      </ion-button>
+    </ion-col>
+    <!-- <ion-col size="4">
+      <ion-button (click)="export('xls')" expand="block" fill="clear" shape="round"  *ngIf="!noPublicationWarning">
+        Download Graphic to Excel
+      </ion-button>
+    </ion-col> -->
+  </ion-row>
 
   <!-- <div class="about-header">
     Instead of loading an image each time the select changes, use opacity to transition them

@@ -41,6 +41,7 @@
     "cordova-plugin-inappbrowser": "5.0.0",
     "core-js": "^3.6.4",
     "ngx-echarts": "^14.0.0",
+    "ngx-export-as": "^1.14.1",
     "rxjs": "^6.5.4",
     "sw-toolbox": "3.6.0",
     "swiper": "8.0.7",

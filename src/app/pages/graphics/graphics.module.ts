@@ -4,6 +4,7 @@ import { IonicModule } from "@ionic/angular";
 
 import { FormsModule } from "@angular/forms";
 import { NgxEchartsModule } from "ngx-echarts";
+import { ExportAsModule } from "ngx-export-as";
 import { PopoverPage } from "../about-popover/about-popover";
 import { GraphicsPage } from "./graphics";
 import { GraphicsPageRoutingModule } from "./graphics-routing.module";
@@ -17,6 +18,7 @@ import { GraphicsPageRoutingModule } from "./graphics-routing.module";
     NgxEchartsModule.forRoot({
       echarts: () => import("echarts"),
     }),
+    ExportAsModule,
   ],
   declarations: [GraphicsPage, PopoverPage],
   bootstrap: [GraphicsPage],

@@ -46,7 +46,13 @@ export class ApiService {
   GetGraphicsRating(id: string, habitId: string) {
     const params = new HttpParams().set("userId", id).set("habitId", habitId);
     return this.http
-      .get(this.concatenateUrl("/graphics/rating"), {
+      .get<{
+        user_rating: {
+          createdAt: string;
+          publicationId: string;
+          rate: number;
+        }[];
+      }>(this.concatenateUrl("/graphics/rating"), {
         params,
       })
       .toPromise();
