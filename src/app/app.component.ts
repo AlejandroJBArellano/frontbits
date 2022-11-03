@@ -4,8 +4,8 @@ import { SwUpdate } from "@angular/service-worker";
 
 import { MenuController, Platform, ToastController } from "@ionic/angular";
 
-import { StatusBar } from "@capacitor/status-bar";
 import { SplashScreen } from "@capacitor/splash-screen";
+import { StatusBar } from "@capacitor/status-bar";
 
 import { Storage } from "@ionic/storage-angular";
 
@@ -25,9 +25,9 @@ export class AppComponent implements OnInit {
       icon: "calendar",
     },
     {
-      title: "Speakers",
-      url: "/app/tabs/speakers",
-      icon: "people",
+      title: "Publications",
+      url: "/app/tabs/publications",
+      icon: "paper",
     },
     {
       title: "Create",
@@ -35,9 +35,9 @@ export class AppComponent implements OnInit {
       icon: "clipboard",
     },
     {
-      title: "About",
-      url: "/app/tabs/about",
-      icon: "information-circle",
+      title: "Graphics",
+      url: "/app/tabs/graphics",
+      icon: "analytics",
     },
   ];
   loggedIn = false;
