@@ -17,12 +17,16 @@
       <ion-select
         placeholder="Select Habit"
         (ionChange)="onChange($event)"
+        [(ngModel)]="habitId"
       >
         <ion-select-option *ngFor="let habit of habits" value={{habit._id}}>{{habit.title}}</ion-select-option>
       </ion-select>
     </ion-item>
   </ion-list>
-  <div echarts [options]="chartOption" class="demo-chart" (chartInit)="onChartInit($event)"></div>
+  <div echarts [options]="chartOption" class="demo-chart" (chartInit)="onChartInit($event)" *ngIf="!noPublicationWarning"></div>
+  <ion-text color="dark" *ngIf="noPublicationWarning">
+    <h3 style="text-align: center;">{{noPublicationWarning}}</h3>
+  </ion-text>
 
   <!-- <div class="about-header">
     Instead of loading an image each time the select changes, use opacity to transition them

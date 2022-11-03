@@ -1,7 +1,7 @@
-import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { IHabit } from "../interfaces/habits";
+import { Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
+import { IHabit } from "../interfaces/habits";
 
 @Injectable({
   providedIn: "root",
@@ -43,8 +43,8 @@ export class ApiService {
       params,
     });
   }
-  GetGraphicsRating(id: string) {
-    const params = new HttpParams().set("userId", id);
+  GetGraphicsRating(id: string, habitId: string) {
+    const params = new HttpParams().set("userId", id).set("habitId", habitId);
     return this.http
       .get(this.concatenateUrl("/graphics/rating"), {
         params,

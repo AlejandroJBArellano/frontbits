@@ -1,48 +1,43 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { AlertController, IonList, IonRouterOutlet, LoadingController, ModalController, ToastController, Config } from '@ionic/angular';
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { Router } from "@angular/router";
+import {
+  AlertController,
+  Config,
+  IonList,
+  IonRouterOutlet,
+  LoadingController,
+  ModalController,
+  ToastController,
+} from "@ionic/angular";
 
-import { ScheduleFilterPage } from '../schedule-filter/schedule-filter';
-import { ConferenceData } from '../../providers/conference-data';
-import { UserData } from '../../providers/user-data';
-import { ApiService } from '../../services/api.service';
-import { IHabit } from '../../interfaces/habits';
+import { IHabit } from "../../interfaces/habits";
+import { ConferenceData } from "../../providers/conference-data";
+import { UserData } from "../../providers/user-data";
+import { ApiService } from "../../services/api.service";
+import { ScheduleFilterPage } from "../schedule-filter/schedule-filter";
 
 @Component({
-  selector: 'page-schedule',
-  templateUrl: 'home.html',
-  styleUrls: ['./home.scss'],
+  selector: "page-schedule",
+  templateUrl: "home.html",
+  styleUrls: ["./home.scss"],
 })
 export class SchedulePage implements OnInit {
   // Gets a reference to the list element
-  @ViewChild('scheduleList', { static: true }) scheduleList: IonList;
+  @ViewChild("scheduleList", { static: true }) scheduleList: IonList;
 
   ios: boolean;
   dayIndex = 0;
-  queryText = '';
-  segment = 'all';
+  queryText = "";
+  segment = "all";
   excludeTracks: any = [];
   shownSessions: any = [];
   groups: any = [];
   confDate: string;
   showSearchbar: boolean;
 
-  public testUser = "62f83916918a55c6973b40b7"
+  public userId = "62f83916918a55c6973b40b7";
 
-  public publications = [
-    {
-      id: "1",
-      title: "13/02/2003",
-      description: "7 cups because my girlfriend is a vegetarian",
-      customProperties: [
-        {
-          key: "Better points",
-          value: "Best redaction"
-        }
-      ]
-    }
-  ]
-  public habits: IHabit[] = []
+  public habits: IHabit[] = [];
 
   constructor(
     public alertCtrl: AlertController,
@@ -55,12 +50,12 @@ export class SchedulePage implements OnInit {
     public user: UserData,
     public config: Config,
     private api: ApiService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.updateHabits();
 
-    this.ios = this.config.get('mode') === 'ios';
+    this.ios = this.config.get("mode") === "ios";
   }
 
   async updateHabits() {
@@ -75,7 +70,9 @@ export class SchedulePage implements OnInit {
     //   console.log(this.groups)
     // });
 
-    this.habits = await this.api.ListHabits(this.testUser);
+    this.userId = await this.api.GetActualUserId();
+
+    this.habits = await this.api.ListHabits(this.userId);
   }
 
   async presentFilter() {
@@ -83,7 +80,7 @@ export class SchedulePage implements OnInit {
       component: ScheduleFilterPage,
       swipeToClose: true,
       presentingElement: this.routerOutlet.nativeEl,
-      componentProps: { excludedTracks: this.excludeTracks }
+      componentProps: { excludedTracks: this.excludeTracks },
     });
     await modal.present();
 
@@ -97,7 +94,7 @@ export class SchedulePage implements OnInit {
   async addFavorite(slidingItem: HTMLIonItemSlidingElement, sessionData: any) {
     if (this.user.hasFavorite(sessionData.name)) {
       // Prompt to remove favorite
-      this.removeFavorite(slidingItem, sessionData, 'Favorite already added');
+      this.removeFavorite(slidingItem, sessionData, "Favorite already added");
     } else {
       // Add as a favorite
       this.user.addFavorite(sessionData.name);
@@ -109,33 +106,38 @@ export class SchedulePage implements OnInit {
       const toast = await this.toastCtrl.create({
         header: `${sessionData.name} was successfully added as a favorite.`,
         duration: 3000,
-        buttons: [{
-          text: 'Close',
-          role: 'cancel'
-        }]
+        buttons: [
+          {
+            text: "Close",
+            role: "cancel",
+          },
+        ],
       });
 
       // Present the toast at the bottom of the page
       await toast.present();
     }
-
   }
 
-  async removeFavorite(slidingItem: HTMLIonItemSlidingElement, sessionData: any, title: string) {
+  async removeFavorite(
+    slidingItem: HTMLIonItemSlidingElement,
+    sessionData: any,
+    title: string
+  ) {
     const alert = await this.alertCtrl.create({
       header: title,
-      message: 'Would you like to remove this session from your favorites?',
+      message: "Would you like to remove this session from your favorites?",
       buttons: [
         {
-          text: 'Cancel',
+          text: "Cancel",
           handler: () => {
             // they clicked the cancel button, do not remove the session
             // close the sliding item and hide the option buttons
             slidingItem.close();
-          }
+          },
         },
         {
-          text: 'Remove',
+          text: "Remove",
           handler: () => {
             // they want to remove this session from their favorites
             this.user.removeFavorite(sessionData.name);
@@ -143,9 +145,9 @@ export class SchedulePage implements OnInit {
 
             // close the sliding item and hide the option buttons
             slidingItem.close();
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
     // now present the alert on top of all other content
     await alert.present();
@@ -154,7 +156,7 @@ export class SchedulePage implements OnInit {
   async openSocial(network: string, fab: HTMLIonFabElement) {
     const loading = await this.loadingCtrl.create({
       message: `Posting to ${network}`,
-      duration: (Math.random() * 1000) + 500
+      duration: Math.random() * 1000 + 500,
     });
     await loading.present();
     await loading.onWillDismiss();
