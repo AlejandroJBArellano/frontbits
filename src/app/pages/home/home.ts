@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
 import {
-  AlertController,
   Config,
   IonList,
   IonRouterOutlet,
@@ -13,6 +12,7 @@ import {
 import { IHabit } from "../../interfaces/habits";
 import { ConferenceData } from "../../providers/conference-data";
 import { UserData } from "../../providers/user-data";
+import { AlertService } from "../../services/alert.service";
 import { ApiService } from "../../services/api.service";
 import { ScheduleFilterPage } from "../schedule-filter/schedule-filter";
 
@@ -40,7 +40,7 @@ export class SchedulePage implements OnInit {
   public habits: IHabit[] = [];
 
   constructor(
-    public alertCtrl: AlertController,
+    public alertService: AlertService,
     public confData: ConferenceData,
     public loadingCtrl: LoadingController,
     public modalCtrl: ModalController,
@@ -54,6 +54,8 @@ export class SchedulePage implements OnInit {
 
   ngOnInit() {
     this.updateHabits();
+
+    console.log(this.habits, this.user);
 
     this.ios = this.config.get("mode") === "ios";
   }
@@ -73,6 +75,19 @@ export class SchedulePage implements OnInit {
     this.user = await this.userData.getUser();
 
     this.habits = await this.api.ListHabits(this.user?._id);
+
+    if (!this.habits.length) {
+      this.alertService.presentAlert({
+        header: "Alert!",
+        message: "There is no habits yeat!",
+        buttons: [
+          {
+            text: "Ok!",
+            handler: () => this.router.navigateByUrl("/app/tabs/create"),
+          },
+        ],
+      });
+    }
   }
 
   async presentFilter() {
@@ -124,7 +139,7 @@ export class SchedulePage implements OnInit {
     sessionData: any,
     title: string
   ) {
-    const alert = await this.alertCtrl.create({
+    this.alertService.presentAlert({
       header: title,
       message: "Would you like to remove this session from your favorites?",
       buttons: [
@@ -149,8 +164,6 @@ export class SchedulePage implements OnInit {
         },
       ],
     });
-    // now present the alert on top of all other content
-    await alert.present();
   }
 
   async openSocial(network: string, fab: HTMLIonFabElement) {
