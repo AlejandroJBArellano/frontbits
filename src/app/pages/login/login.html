@@ -13,11 +13,17 @@
     <img src="assets/img/appicon.svg" alt="Ionic logo">
   </div>
 
-  <form #loginForm="ngForm" novalidate>
+  <form #loginForm="ngForm">
     <ion-list>
       <ion-item>
-        <ion-label position="stacked" color="primary">Username</ion-label>
-        <ion-input [(ngModel)]="login.username" name="username" type="text" #username="ngModel" spellcheck="false" autocapitalize="off"
+        <ion-label position="stacked" color="primary">Email</ion-label>
+        <ion-input
+          [(ngModel)]="login.email"
+          name="email"
+          type="email"
+          #username="ngModel"
+          spellcheck="false"
+          autocapitalize="off"
           required>
         </ion-input>
       </ion-item>
@@ -28,7 +34,7 @@
         </p>
       </ion-text>
 
-      <ion-item>
+      <!-- <ion-item>
         <ion-label position="stacked" color="primary">Password</ion-label>
         <ion-input [(ngModel)]="login.password" name="password" type="password" #password="ngModel" required>
         </ion-input>
@@ -38,7 +44,7 @@
         <p [hidden]="password.valid || submitted === false" class="ion-padding-start">
           Password is required
         </p>
-      </ion-text>
+      </ion-text> -->
     </ion-list>
 
     <ion-row>

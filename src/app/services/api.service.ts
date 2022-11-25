@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
 import { IHabit } from "../interfaces/habits";
+import { IUser } from "../interfaces/user";
 
 @Injectable({
   providedIn: "root",
@@ -13,8 +14,14 @@ export class ApiService {
     return `${environment.api}${url}`;
   }
 
-  GetActualUserId() {
-    return "631ab5ad5c606381baf74b34";
+  GetUser(query: any) {
+    let params = new HttpParams();
+    Object.keys(query).forEach((k) => (params = params.set(k, query[k])));
+    return this.http
+      .get<IUser>(this.concatenateUrl("/user"), {
+        params,
+      })
+      .toPromise();
   }
 
   ListHabits(id: string) {
@@ -63,8 +70,8 @@ export class ApiService {
       .post(this.concatenateUrl("/publication"), publication)
       .toPromise();
   }
-  CreateUser(user: any) {
-    return this.http.post(this.concatenateUrl("/user"), user);
+  CreateUser(user: IUser) {
+    return this.http.post<IUser>(this.concatenateUrl("/user"), user);
   }
   CreateHabit(habit: any) {
     return this.http.post(this.concatenateUrl("/habit"), habit).toPromise();

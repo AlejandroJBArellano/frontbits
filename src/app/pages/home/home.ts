@@ -35,7 +35,7 @@ export class SchedulePage implements OnInit {
   confDate: string;
   showSearchbar: boolean;
 
-  public userId = "62f83916918a55c6973b40b7";
+  public declare user;
 
   public habits: IHabit[] = [];
 
@@ -47,9 +47,9 @@ export class SchedulePage implements OnInit {
     public router: Router,
     public routerOutlet: IonRouterOutlet,
     public toastCtrl: ToastController,
-    public user: UserData,
     public config: Config,
-    private api: ApiService
+    private api: ApiService,
+    private userData: UserData
   ) {}
 
   ngOnInit() {
@@ -70,9 +70,9 @@ export class SchedulePage implements OnInit {
     //   console.log(this.groups)
     // });
 
-    this.userId = await this.api.GetActualUserId();
+    this.user = await this.userData.getUser();
 
-    this.habits = await this.api.ListHabits(this.userId);
+    this.habits = await this.api.ListHabits(this.user?._id);
   }
 
   async presentFilter() {

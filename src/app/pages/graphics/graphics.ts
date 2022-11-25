@@ -6,6 +6,7 @@ import { ApiService } from "../../services/api.service";
 import { EChartsOption } from "echarts";
 import { ExportAsConfig, ExportAsService } from "ngx-export-as";
 import { IHabit } from "src/app/interfaces/habits";
+import { UserData } from "../../providers/user-data";
 import { PopoverPage } from "../about-popover/about-popover";
 @Component({
   selector: "page-about",
@@ -19,7 +20,7 @@ export class GraphicsPage implements OnInit {
 
   declare habits: IHabit[];
 
-  private userId = this.apiService.GetActualUserId();
+  private declare user;
 
   public declare habitId: string;
   public declare noPublicationWarning: string;
@@ -33,7 +34,8 @@ export class GraphicsPage implements OnInit {
   constructor(
     public popoverCtrl: PopoverController,
     private apiService: ApiService,
-    private exportAsService: ExportAsService
+    private exportAsService: ExportAsService,
+    private userData: UserData
   ) {}
 
   async ngOnInit() {
@@ -41,35 +43,38 @@ export class GraphicsPage implements OnInit {
   }
 
   public async fetchData() {
-    this.habits = await this.apiService.ListHabits(this.userId);
+    this.user = await this.userData.getUser();
+    this.habits = await this.apiService.ListHabits(this.user?._id);
     this.habitId = this.habits[0]._id;
     this.initializeChart();
   }
 
   public initializeChart() {
-    this.apiService.GetGraphicsRating(this.userId, this.habitId).then((e) => {
-      if (e.user_rating.length) {
-        this.noPublicationWarning = "";
-        this.chartOption = {
-          xAxis: {
-            type: "category",
-            data: e?.user_rating?.map((obj) => obj.createdAt.slice(0, 10)),
-          },
-          yAxis: {
-            type: "value",
-          },
-          series: [
-            {
-              data: e?.user_rating?.map((obj) => obj.rate),
-              type: "line",
+    this.apiService
+      .GetGraphicsRating(this.user?._id, this.habitId)
+      .then((e) => {
+        if (e.user_rating.length) {
+          this.noPublicationWarning = "";
+          this.chartOption = {
+            xAxis: {
+              type: "category",
+              data: e?.user_rating?.map((obj) => obj.createdAt.slice(0, 10)),
             },
-          ],
-        };
-        return;
-      }
-      this.noPublicationWarning =
-        "You don't have yet publications on this Habit";
-    });
+            yAxis: {
+              type: "value",
+            },
+            series: [
+              {
+                data: e?.user_rating?.map((obj) => obj.rate),
+                type: "line",
+              },
+            ],
+          };
+          return;
+        }
+        this.noPublicationWarning =
+          "You don't have yet publications on this Habit";
+      });
   }
 
   async presentPopover(event: Event) {

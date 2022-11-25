@@ -1,19 +1,24 @@
+import { DOCUMENT } from "@angular/common";
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   Inject,
-  ViewChild,
-  AfterViewInit,
   OnInit,
+  ViewChild,
 } from "@angular/core";
-import { ConferenceData } from "../../providers/conference-data";
 import { Config, Platform } from "@ionic/angular";
-import { DOCUMENT } from "@angular/common";
+import { ConferenceData } from "../../providers/conference-data";
 
-import { darkStyle } from "./map-dark-style";
-import { ApiService } from "../../services/api.service";
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from "@angular/forms";
 import { IHabit } from "../../interfaces/habits";
-import { FormArray, UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
+import { UserData } from "../../providers/user-data";
+import { ApiService } from "../../services/api.service";
+import { darkStyle } from "./map-dark-style";
 
 @Component({
   selector: "page-map",
@@ -44,7 +49,8 @@ export class CreatePage implements AfterViewInit, OnInit {
     public platform: Platform,
     public config: Config,
     private api: ApiService,
-    public formBuilder: UntypedFormBuilder
+    public formBuilder: UntypedFormBuilder,
+    private userData: UserData
   ) {
     this.publicationForm = formBuilder.group({
       habitId: ["", Validators.required],
@@ -60,12 +66,13 @@ export class CreatePage implements AfterViewInit, OnInit {
     });
   }
 
-  private userId = this.api.GetActualUserId();
+  private declare user;
 
   // public customProperty = "";
   // public customPropertyValues = [];
 
   ngOnInit() {
+    this.user = this.userData.getUser();
     console.log("onInit");
   }
 
@@ -80,7 +87,7 @@ export class CreatePage implements AfterViewInit, OnInit {
     }
   }
   public async getHabits() {
-    this.habits = await this.api.ListHabits(this.api.GetActualUserId());
+    this.habits = await this.api.ListHabits(this.user._id);
   }
 
   public onChangeCustomProperty() {
@@ -111,7 +118,7 @@ export class CreatePage implements AfterViewInit, OnInit {
       title: this.publicationForm.get("title").value,
       description: this.publicationForm.get("description").value,
       customProperties,
-      userId: this.userId,
+      userId: this.user._id,
       habitId: this.habits[0]._id,
       rate: this.publicationForm.get("rate").value,
     };
@@ -127,7 +134,7 @@ export class CreatePage implements AfterViewInit, OnInit {
     const habit = {
       title: this.habitForm.get("title").value,
       description: this.habitForm.get("description").value,
-      userId: this.userId,
+      userId: this.user._id,
     };
     await this.api.CreateHabit(habit);
     console.log(habit);
