@@ -7,17 +7,44 @@
   </ion-toolbar>
   <ion-toolbar>
     <ion-segment [(ngModel)]="segment">
-      <ion-segment-button value="publication">
-        Publication
-      </ion-segment-button>
       <ion-segment-button value="habits">
         Habit
+      </ion-segment-button>
+      <ion-segment-button value="publication" *ngIf="habits.length">
+        Publication
       </ion-segment-button>
     </ion-segment>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <form [formGroup]="habitForm" (ngSubmit)="createHabit()" *ngIf="segment === 'habits'">
+    <ion-list>
+      <ion-item>
+        <ion-label>Title</ion-label>
+        <ion-input formControlName="title" autofocus type="text" placeholder="Play an Instrument 🎻"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Description</ion-label>
+        <ion-input formControlName="description" type="text" placeholder="Take one hour of class ⌛"></ion-input>
+      </ion-item>
+      <ion-row>
+        <ion-col>
+          <ion-button type="submit" color="danger" expand="block">Submit</ion-button>
+        </ion-col>
+      </ion-row>
+      <!-- <ion-item>
+        <ion-label>Icon</ion-label>
+        <ion-select interface="popover" multiple="false" placeholder="Select Icon">
+          <ion-select-option *ngFor="let icon of icons" [value]="icon">
+            <span>
+              <ion-icon name="add-circle"></ion-icon>
+            </span>
+          </ion-select-option>
+        </ion-select>
+      </ion-item> -->
+    </ion-list>
+  </form>
   <form [formGroup]="publicationForm" (ngSubmit)="createPublication()" *ngIf="segment === 'publication'">
     <ion-list>
       <ion-item>
@@ -25,21 +52,22 @@
         <ion-select interface="popover" formControlName="habitId">
           <ion-select-option *ngFor="let habit of habits" [value]="habit._id">{{habit.title}}</ion-select-option>
         </ion-select>
+        <ion-note slot="helper">Select an habit</ion-note>
       </ion-item>
       <ion-item>
         <ion-label position="fixed">Date</ion-label>
         <!-- <ion-input formControlName="title" type="date"></ion-input> -->
-        <ion-datetime [value]="max" [max]="max" formControlName="title" display-format="DD.MM.YYYY HH:mm"></ion-datetime>
+        <ion-datetime [value]="max" [max]="max" formControlName="title" display-format="DD.MM.YYYY HH:mm" picker-format="DD.MM.YYYY HH:mm" hourCycle="h12"></ion-datetime>
       </ion-item>
-      <ion-item>
+      <ion-item counter="true">
         <ion-label position="floating">Description</ion-label>
         <ion-textarea autoGrow autocapitalize [maxlength]="10000" formControlName="description" type="text"></ion-textarea>
       </ion-item>
-      <ion-item>
+      <ion-item counter="true">
         <ion-label position="floating">Points to improve</ion-label>
         <ion-textarea autoGrow autocapitalize [maxlength]="10000" formControlName="improvables"></ion-textarea>
       </ion-item>
-      <ion-item>
+      <ion-item counter="true">
         <ion-label position="floating">Points to mark</ion-label>
         <ion-textarea autoGrow autocapitalize [maxlength]="10000" formControlName="remarkables"></ion-textarea>
       </ion-item>
@@ -61,33 +89,6 @@
           <ion-button type="submit" color="danger" expand="block">Submit</ion-button>
         </ion-col>
       </ion-row>
-    </ion-list>
-  </form>
-  <form [formGroup]="habitForm" (ngSubmit)="createHabit()" *ngIf="segment === 'habits'">
-    <ion-list>
-      <ion-item>
-        <ion-label>Title</ion-label>
-        <ion-input formControlName="title" autofocus type="text" placeholder="Awesome Input"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label>Description</ion-label>
-        <ion-input formControlName="description" type="text" placeholder="Awesome Input"></ion-input>
-      </ion-item>
-      <ion-row>
-        <ion-col>
-          <ion-button type="submit" color="danger" expand="block">Submit</ion-button>
-        </ion-col>
-      </ion-row>
-      <!-- <ion-item>
-        <ion-label>Icon</ion-label>
-        <ion-select interface="popover" multiple="false" placeholder="Select Icon">
-          <ion-select-option *ngFor="let icon of icons" [value]="icon">
-            <span>
-              <ion-icon name="add-circle"></ion-icon>
-            </span>
-          </ion-select-option>
-        </ion-select>
-      </ion-item> -->
     </ion-list>
   </form>
 </ion-content>
