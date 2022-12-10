@@ -2,7 +2,7 @@ import { AfterViewInit, Component } from "@angular/core";
 import { Router } from "@angular/router";
 
 import { UserData } from "../../providers/user-data";
-import { AlertService } from "../../services/alert.service";
+import { AlertService } from "../../services/ui/alert.service";
 
 @Component({
   selector: "page-account",
