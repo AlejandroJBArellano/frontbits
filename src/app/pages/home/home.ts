@@ -1,19 +1,15 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
-import {
-  Config,
-  IonList,
-  IonRouterOutlet,
-  LoadingController,
-  ModalController,
-  ToastController,
-} from "@ionic/angular";
+import { Config, IonList, IonRouterOutlet } from "@ionic/angular";
 
 import { IHabit } from "../../interfaces/habits";
 import { ConferenceData } from "../../providers/conference-data";
 import { UserData } from "../../providers/user-data";
-import { AlertService } from "../../services/alert.service";
 import { ApiService } from "../../services/api.service";
+import { AlertService } from "../../services/ui/alert.service";
+import { LoadingService } from "../../services/ui/loading.service";
+import { ModalService } from "../../services/ui/modal.service";
+import { ToastService } from "../../services/ui/toast.service";
 import { ScheduleFilterPage } from "../schedule-filter/schedule-filter";
 
 @Component({
@@ -42,14 +38,14 @@ export class SchedulePage implements OnInit {
   constructor(
     public alertService: AlertService,
     public confData: ConferenceData,
-    public loadingCtrl: LoadingController,
-    public modalCtrl: ModalController,
+    public loadingService: LoadingService,
+    public modalService: ModalService,
     public router: Router,
     public routerOutlet: IonRouterOutlet,
-    public toastCtrl: ToastController,
     public config: Config,
     private api: ApiService,
-    private userData: UserData
+    private userData: UserData,
+    private toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -71,33 +67,46 @@ export class SchedulePage implements OnInit {
     //   this.groups = data.groups;
     //   console.log(this.groups)
     // });
+    try {
+      const loader = await this.loadingService.presentLoading({
+        message: "Fetching data...",
+      });
 
-    this.user = await this.userData.getUser();
+      await loader.present();
 
-    this.habits = await this.api.ListHabits(this.user?._id);
+      this.user = await this.userData.getUser();
 
-    if (!this.habits.length) {
-      this.alertService.presentAlert({
-        header: "Alert!",
-        message: "There is no habits yeat!",
-        buttons: [
-          {
-            text: "Ok!",
-            handler: () => this.router.navigateByUrl("/app/tabs/create"),
-          },
-        ],
+      this.habits = await this.api.ListHabits(this.user?._id);
+
+      await loader.dismiss();
+      if (!this.habits.length) {
+        await this.alertService.presentAlert({
+          header: "Alert!",
+          message: "There is no habits yet!",
+          buttons: [
+            {
+              text: "Ok!",
+              handler: () => this.router.navigateByUrl("/app/tabs/create"),
+            },
+          ],
+        });
+      }
+    } catch (error) {
+      await this.alertService.presentAlert({
+        header: "Error!",
+        message: error,
+        buttons: ["Ok"],
       });
     }
   }
 
   async presentFilter() {
-    const modal = await this.modalCtrl.create({
+    const modal = await this.modalService.presentModal({
       component: ScheduleFilterPage,
       swipeToClose: true,
       presentingElement: this.routerOutlet.nativeEl,
       componentProps: { excludedTracks: this.excludeTracks },
     });
-    await modal.present();
 
     const { data } = await modal.onWillDismiss();
     if (data) {
@@ -117,8 +126,7 @@ export class SchedulePage implements OnInit {
       // Close the open item
       slidingItem.close();
 
-      // Create a toast
-      const toast = await this.toastCtrl.create({
+      await this.toastService.presentToast({
         header: `${sessionData.name} was successfully added as a favorite.`,
         duration: 3000,
         buttons: [
@@ -128,9 +136,6 @@ export class SchedulePage implements OnInit {
           },
         ],
       });
-
-      // Present the toast at the bottom of the page
-      await toast.present();
     }
   }
 
@@ -167,7 +172,7 @@ export class SchedulePage implements OnInit {
   }
 
   async openSocial(network: string, fab: HTMLIonFabElement) {
-    const loading = await this.loadingCtrl.create({
+    const loading = await this.loadingService.presentLoading({
       message: `Posting to ${network}`,
       duration: Math.random() * 1000 + 500,
     });

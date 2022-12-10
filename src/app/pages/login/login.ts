@@ -3,8 +3,9 @@ import { NgForm } from "@angular/forms";
 import { Router } from "@angular/router";
 import { UserData } from "../../providers/user-data";
 
-import { AlertService } from "src/app/services/alert.service";
+import { AlertService } from "src/app/services/ui/alert.service";
 import { UserOptions } from "../../interfaces/user-options";
+import { LoadingService } from "../../services/ui/loading.service";
 
 @Component({
   selector: "page-login",
@@ -18,14 +19,21 @@ export class LoginPage {
   constructor(
     public userData: UserData,
     public router: Router,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private loadingService: LoadingService
   ) {}
 
   async onLogin(form: NgForm) {
     this.submitted = true;
     if (!form.valid) return;
     try {
+      const loader = await this.loadingService.presentLoading({
+        message: "Fetching user...",
+      });
+      await loader.present();
       await this.userData.login(this.login.email);
+      await loader.dismiss();
+      this.router.navigateByUrl("/app/tans/habits");
     } catch (error) {
       console.info(error);
       this.alertService.presentAlert({
@@ -33,6 +41,8 @@ export class LoginPage {
         message: error,
         buttons: ["OK"],
       });
+    } finally {
+      this.login.email = "";
     }
   }
 
