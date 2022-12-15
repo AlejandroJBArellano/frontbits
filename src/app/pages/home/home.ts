@@ -76,6 +76,12 @@ export class SchedulePage implements OnInit {
 
       this.user = await this.userData.getUser();
 
+      if (!this.user) {
+        this.router.navigateByUrl("/login");
+        await loader.dismiss();
+        return;
+      }
+
       this.habits = await this.api.ListHabits(this.user?._id);
 
       await loader.dismiss();
