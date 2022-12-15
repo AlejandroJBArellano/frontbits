@@ -26,14 +26,13 @@ export class LoginPage {
   async onLogin(form: NgForm) {
     this.submitted = true;
     if (!form.valid) return;
+    const loader = await this.loadingService.presentLoading({
+      message: "Fetching user...",
+    });
     try {
-      const loader = await this.loadingService.presentLoading({
-        message: "Fetching user...",
-      });
       await loader.present();
       await this.userData.login(this.login.email);
-      await loader.dismiss();
-      this.router.navigateByUrl("/app/tans/habits");
+      this.router.navigateByUrl("/app/tabs/habits");
     } catch (error) {
       console.info(error);
       this.alertService.presentAlert({
@@ -42,6 +41,7 @@ export class LoginPage {
         buttons: ["OK"],
       });
     } finally {
+      await loader.dismiss();
       this.login.email = "";
     }
   }

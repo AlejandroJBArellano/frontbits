@@ -67,11 +67,10 @@ export class SchedulePage implements OnInit {
     //   this.groups = data.groups;
     //   console.log(this.groups)
     // });
+    const loader = await this.loadingService.presentLoading({
+      message: "Fetching data...",
+    });
     try {
-      const loader = await this.loadingService.presentLoading({
-        message: "Fetching data...",
-      });
-
       await loader.present();
 
       this.user = await this.userData.getUser();
@@ -98,6 +97,7 @@ export class SchedulePage implements OnInit {
         });
       }
     } catch (error) {
+      await loader.dismiss();
       await this.alertService.presentAlert({
         header: "Error!",
         message: error,
