@@ -24,6 +24,14 @@ export class ApiService {
       .toPromise();
   }
 
+  GetHabit(_id: string) {
+    const params = new HttpParams().set("_id", _id);
+    return this.http
+      .get<IHabit>(this.concatenateUrl("/habit"), {
+        params,
+      })
+      .toPromise();
+  }
   ListHabits(id: string) {
     const params = new HttpParams().set("userId", id);
     return this.http

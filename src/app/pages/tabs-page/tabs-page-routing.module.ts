@@ -16,6 +16,11 @@ const routes: Routes = [
             component: SchedulePage,
           },
           {
+            path: ":habitId",
+            loadChildren: () =>
+              import("../habit/habit.module").then((m) => m.HabitModule),
+          },
+          {
             path: "session/:sessionId",
             loadChildren: () =>
               import("../session-detail/session-detail.module").then(
