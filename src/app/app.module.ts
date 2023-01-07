@@ -5,7 +5,6 @@ import { InAppBrowser } from "@ionic-native/in-app-browser/ngx";
 import { IonicModule } from "@ionic/angular";
 import { IonicStorageModule } from "@ionic/storage-angular";
 
-import { initializeApp, provideFirebaseApp } from "@angular/fire/app";
 import { FormsModule } from "@angular/forms";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
@@ -22,7 +21,6 @@ import { AppComponent } from "./app.component";
     ServiceWorkerModule.register("ngsw-worker.js", {
       enabled: environment.production,
     }),
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
   ],
   declarations: [AppComponent],
   providers: [InAppBrowser],

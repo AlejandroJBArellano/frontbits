@@ -1,14 +1,40 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { FirebaseApp, initializeApp } from 'firebase/app';
+import 'firebase/app-check';
+import { AppCheck, AppCheckTokenResult, getToken, initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
 import { environment } from "../../environments/environment";
 import { IHabit } from "../interfaces/habits";
 import { IUser } from "../interfaces/user";
-
 @Injectable({
   providedIn: "root",
 })
 export class ApiService {
-  constructor(private http: HttpClient) {}
+  declare app: FirebaseApp
+  declare appCheck: AppCheck;
+
+  constructor(private http: HttpClient) {
+    // (<any>window).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+    (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN = "399371E8-01A9-45D1-8336-5C17A000A559";
+
+    this.app = initializeApp(environment.firebase);
+
+    // Create a ReCaptchaEnterpriseProvider instance using reCAPTCHA Enterprise.
+    this.appCheck = initializeAppCheck(this.app, {
+      provider: new ReCaptchaEnterpriseProvider(environment.reCaptchaProvider),
+      isTokenAutoRefreshEnabled: true // Set to true to allow auto-refresh.
+    });
+  }
+
+  async getToken(): Promise<AppCheckTokenResult | undefined> {
+    try {
+      const appCheckTokenResponse = await getToken(this.appCheck);
+      return appCheckTokenResponse;
+    } catch (err) {
+      console.log(err)
+      return err;
+    }
+  }
 
   concatenateUrl(url: string) {
     return `${environment.api}${url}`;

@@ -49,6 +49,10 @@ export class SchedulePage implements OnInit {
   ) {}
 
   ngOnInit() {
+
+    this.api.getToken().then(e => {
+      console.log(e)
+    }).catch(e => console.log(e))
     this.updateHabits();
 
     console.log(this.habits, this.user);
