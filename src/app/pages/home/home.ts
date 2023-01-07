@@ -6,6 +6,8 @@ import { IHabit } from "../../interfaces/habits";
 import { ConferenceData } from "../../providers/conference-data";
 import { UserData } from "../../providers/user-data";
 import { ApiService } from "../../services/api.service";
+import { AppCheckService } from '../../services/app-check.service';
+import { StorageService } from '../../services/storage.service';
 import { AlertService } from "../../services/ui/alert.service";
 import { LoadingService } from "../../services/ui/loading.service";
 import { ModalService } from "../../services/ui/modal.service";
@@ -32,6 +34,7 @@ export class SchedulePage implements OnInit {
   showSearchbar: boolean;
 
   public declare user;
+  declare token: string
 
   public habits: IHabit[] = [];
 
@@ -45,19 +48,24 @@ export class SchedulePage implements OnInit {
     public config: Config,
     private api: ApiService,
     private userData: UserData,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private storageService: StorageService,
+    private appCheck: AppCheckService
   ) {}
 
   ngOnInit() {
-
-    this.api.getToken().then(e => {
-      console.log(e)
-    }).catch(e => console.log(e))
+    this.getToken()
     this.updateHabits();
 
     console.log(this.habits, this.user);
 
     this.ios = this.config.get("mode") === "ios";
+  }
+
+  private getToken() {
+    this.appCheck.getToken().then(e => {
+      this.token = e.token
+    }).catch(e => console.log(e))
   }
 
   async updateHabits() {
@@ -85,7 +93,9 @@ export class SchedulePage implements OnInit {
         return;
       }
 
-      this.habits = await this.api.ListHabits(this.user?._id);
+      this.habits = await this.api.ListHabits(this.user?._id, {
+        "X-Firebase-AppCheck": this.token
+      });
 
       await loader.dismiss();
       if (!this.habits.length) {

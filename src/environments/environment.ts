@@ -1,6 +1,7 @@
 export const environment = {
   production: false,
-  api: "https://backbits.onrender.com",
+  // api: "https://backbits.onrender.com",
+  api: "http://localhost:3000",
   firebase: {
     apiKey: "AIzaSyCpyzpUfQCNvQxLeMeZyLGUuHCIDuK8H0I",
     authDomain: "grabis-1cf06.firebaseapp.com",
