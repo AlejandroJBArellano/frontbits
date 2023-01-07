@@ -1,13 +1,18 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+
 import { environment } from "../../environments/environment";
 import { IHabit } from "../interfaces/habits";
 import { IUser } from "../interfaces/user";
 
+interface IHeaders {
+  [header: string]: string | string[];
+}
 @Injectable({
   providedIn: "root",
 })
 export class ApiService {
+
   constructor(private http: HttpClient) {}
 
   concatenateUrl(url: string) {
@@ -32,11 +37,11 @@ export class ApiService {
       })
       .toPromise();
   }
-  ListHabits(id: string) {
+  ListHabits(id: string, headers?: IHeaders) {
     const params = new HttpParams().set("userId", id);
     return this.http
       .get<IHabit[]>(this.concatenateUrl("/"), {
-        params,
+        params, headers
       })
       .toPromise();
   }
@@ -73,16 +78,16 @@ export class ApiService {
       .toPromise();
   }
 
-  CreatePublication(publication: any) {
+  CreatePublication(publication: any, headers?: IHeaders) {
     return this.http
-      .post(this.concatenateUrl("/publication"), publication)
+      .post(this.concatenateUrl("/publication"), publication, {headers})
       .toPromise();
   }
   CreateUser(user: IUser) {
     return this.http.post<IUser>(this.concatenateUrl("/user"), user);
   }
-  CreateHabit(habit: any) {
-    return this.http.post(this.concatenateUrl("/habit"), habit).toPromise();
+  CreateHabit(habit: any, headers?: IHeaders) {
+    return this.http.post(this.concatenateUrl("/habit"), habit, {headers}).toPromise();
   }
 
   UpdatePublication(publication: any) {
