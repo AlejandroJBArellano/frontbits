@@ -10,6 +10,8 @@ import { StatusBar } from "@capacitor/status-bar";
 import { Storage } from "@ionic/storage-angular";
 
 import { UserData } from "./providers/user-data";
+import { AppCheckService } from "./services/app-check.service";
+import { StorageService } from "./services/storage.service";
 
 @Component({
   selector: "app-root",
@@ -50,12 +52,15 @@ export class AppComponent implements OnInit {
     private storage: Storage,
     private userData: UserData,
     private swUpdate: SwUpdate,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private appCheck: AppCheckService,
+    private storageService: StorageService
   ) {
     this.initializeApp();
   }
 
   async ngOnInit() {
+    this.setToken()
     this.checkLoginStatus();
     this.listenForLoginEvents();
 
@@ -78,6 +83,12 @@ export class AppComponent implements OnInit {
         .then(() => this.swUpdate.activateUpdate())
         .then(() => window.location.reload());
     });
+  }
+
+  setToken(){
+    this.appCheck.getToken().then(async e => {
+      this.storageService.set("appCheckToken", e.token)
+    }).catch(e => console.log(e))
   }
 
   initializeApp() {
