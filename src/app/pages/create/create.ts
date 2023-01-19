@@ -20,7 +20,6 @@ import { IHabit } from "../../interfaces/habits";
 import { UserData } from "../../providers/user-data";
 import { ApiService } from "../../services/api.service";
 import { LoadingService } from "../../services/ui/loading.service";
-import { darkStyle } from "./map-dark-style";
 
 const congrats = ["Keep continue", "Go hard", "Very well", "Keep tracking it!"];
 
@@ -92,9 +91,6 @@ export class CreatePage implements AfterViewInit, OnInit {
     const appEl = this.doc.querySelector("ion-app");
     let isDark = false;
     let style = [];
-    if (appEl.classList.contains("dark-theme")) {
-      style = darkStyle;
-    }
   }
   private async getUser() {
     this.user = await this.userData.getUser();
