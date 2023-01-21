@@ -35,4 +35,12 @@ export class ParseService {
       return Promise.reject(error);
     }
   }
+  public async logOut() {
+    try {
+      await Parse.User.logOut();
+      return Promise.resolve(true);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
 }

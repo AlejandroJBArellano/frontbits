@@ -58,18 +58,10 @@ export class SchedulePage implements OnInit {
   ngOnInit() {
     this.getToken();
     this.updateHabits();
-    this.newInstallation();
 
     console.log(this.habits, this.user);
 
     this.ios = this.config.get("mode") === "ios";
-  }
-
-  private newInstallation() {
-    this.parseService
-      .newInstallation()
-      .then((e) => console.log(e))
-      .catch((e) => console.error(e));
   }
 
   private getToken() {

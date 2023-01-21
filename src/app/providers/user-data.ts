@@ -61,6 +61,7 @@ export class UserData {
   }
 
   async logout(): Promise<boolean> {
+    await this.parseService.logOut();
     await this.storage.remove(this.HAS_LOGGED_IN);
     await this.storage.remove("email");
     await this.storage.remove("user");
