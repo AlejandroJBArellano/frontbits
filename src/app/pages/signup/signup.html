@@ -1,8 +1,5 @@
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
     <ion-title>Signup</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -23,6 +20,17 @@
       <ion-text color="danger">
         <p [hidden]="username.valid || submitted === false" class="ion-padding-start">
           Email is required
+        </p>
+      </ion-text>
+
+      <ion-item>
+        <ion-label position="stacked" color="primary">Password</ion-label>
+        <ion-input [(ngModel)]="signup.password" name="name" type="password" #username="ngModel" required>
+        </ion-input>
+      </ion-item>
+      <ion-text color="danger">
+        <p [hidden]="username.valid || submitted === false" class="ion-padding-start">
+          Password is required
         </p>
       </ion-text>
 

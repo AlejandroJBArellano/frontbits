@@ -1,13 +1,20 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
-import { Config, IonList, IonRouterOutlet } from "@ionic/angular";
+import {
+  Config,
+  IonList,
+  IonRouterOutlet,
+  MenuController,
+  ViewWillEnter,
+} from "@ionic/angular";
 
 import { IHabit } from "../../interfaces/habits";
 import { ConferenceData } from "../../providers/conference-data";
 import { UserData } from "../../providers/user-data";
 import { ApiService } from "../../services/api.service";
-import { AppCheckService } from '../../services/app-check.service';
-import { StorageService } from '../../services/storage.service';
+import { AppCheckService } from "../../services/app-check.service";
+import { ParseService } from "../../services/parse.service";
+import { StorageService } from "../../services/storage.service";
 import { AlertService } from "../../services/ui/alert.service";
 import { LoadingService } from "../../services/ui/loading.service";
 import { ModalService } from "../../services/ui/modal.service";
@@ -19,7 +26,7 @@ import { ScheduleFilterPage } from "../schedule-filter/schedule-filter";
   templateUrl: "home.html",
   styleUrls: ["./home.scss"],
 })
-export class SchedulePage implements OnInit {
+export class SchedulePage implements OnInit, ViewWillEnter {
   // Gets a reference to the list element
   @ViewChild("scheduleList", { static: true }) scheduleList: IonList;
 
@@ -34,7 +41,7 @@ export class SchedulePage implements OnInit {
   showSearchbar: boolean;
 
   public declare user;
-  declare token: string
+  declare token: string;
 
   public habits: IHabit[] = [];
 
@@ -50,11 +57,17 @@ export class SchedulePage implements OnInit {
     private userData: UserData,
     private toastService: ToastService,
     private storageService: StorageService,
-    private appCheck: AppCheckService
+    private appCheck: AppCheckService,
+    private parseService: ParseService,
+    private menuCtrl: MenuController
   ) {}
 
+  ionViewWillEnter() {
+    this.menuCtrl.enable(true);
+  }
+
   ngOnInit() {
-    this.getToken()
+    this.getToken();
     this.updateHabits();
 
     console.log(this.habits, this.user);
@@ -63,9 +76,12 @@ export class SchedulePage implements OnInit {
   }
 
   private getToken() {
-    this.appCheck.getToken().then(e => {
-      this.token = e.token
-    }).catch(e => console.log(e))
+    this.appCheck
+      .getToken()
+      .then((e) => {
+        this.token = e.token;
+      })
+      .catch((e) => console.log(e));
   }
 
   async updateHabits() {
@@ -94,7 +110,7 @@ export class SchedulePage implements OnInit {
       }
 
       this.habits = await this.api.ListHabits(this.user?._id, {
-        "X-Firebase-AppCheck": this.token
+        "X-Firebase-AppCheck": this.token,
       });
 
       await loader.dismiss();
