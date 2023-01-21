@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
   // api: "https://backbits.onrender.com",
-  api: "http://localhost:3000",
+  api: "http://localhost:4000",
   firebase: {
     apiKey: "AIzaSyCpyzpUfQCNvQxLeMeZyLGUuHCIDuK8H0I",
     authDomain: "grabis-1cf06.firebaseapp.com",
@@ -11,5 +11,8 @@ export const environment = {
     appId: "1:337906367299:web:23daf54a673a77ee6d8df6",
     measurementId: "G-5FKKWQ2JPM",
   },
-  reCaptchaProvider: '6Lc1t9QjAAAAADyMWqk_qqRTEm_yLo3uj7xbAsHA'
+  reCaptchaProvider: "6Lc1t9QjAAAAADyMWqk_qqRTEm_yLo3uj7xbAsHA",
+  appIdBack4App: "6SFVl6LVVRwdaAggH1rxtWtxE3chgwOIsKyh7ZEF",
+  jsKeyBack4App: "ZrpwIDpnokhabwyxsw14By6xgGPTTUmgkSKpXbNX",
+  appCheckToken: "399371E8-01A9-45D1-8336-5C17A000A559",
 };
