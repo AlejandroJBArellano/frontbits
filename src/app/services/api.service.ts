@@ -23,6 +23,7 @@ export class ApiService {
       this.headers = {
         "X-Firebase-AppCheck": token,
       };
+      console.log(this.headers);
     });
   }
 
