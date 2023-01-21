@@ -171,6 +171,7 @@ export class CreatePage implements AfterViewInit, OnInit {
   }
 
   public async selectFileOrigin() {
+    //TODO: Check if it does this: "Prompt the user to pick a photo from an album, or take a new photo with the camera."
     const alert = this.alertService.presentAlert({
       header: "Attach media",
       buttons: [
