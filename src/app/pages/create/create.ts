@@ -15,12 +15,12 @@ import {
   UntypedFormGroup,
   Validators,
 } from "@angular/forms";
+import { Camera, CameraResultType } from "@capacitor/camera";
 import { AlertService } from "src/app/services/ui/alert.service";
 import { IHabit } from "../../interfaces/habits";
 import { UserData } from "../../providers/user-data";
 import { ApiService } from "../../services/api.service";
 import { LoadingService } from "../../services/ui/loading.service";
-
 const congrats = ["Keep continue", "Go hard", "Very well", "Keep tracking it!"];
 
 @Component({
@@ -30,6 +30,9 @@ const congrats = ["Keep continue", "Go hard", "Very well", "Keep tracking it!"];
 })
 export class CreatePage implements AfterViewInit, OnInit {
   @ViewChild("mapCanvas", { static: true }) mapElement: ElementRef;
+  private declare image: {
+    src: string;
+  };
   public max = new Date().toISOString();
   public publicationForm: UntypedFormGroup;
   public habitForm: UntypedFormGroup;
@@ -165,5 +168,32 @@ export class CreatePage implements AfterViewInit, OnInit {
       subHeader: "Enjoy this new crossing",
       buttons: ["Thanks!"],
     });
+  }
+
+  public async selectFileOrigin() {
+    const alert = this.alertService.presentAlert({
+      header: "Attach media",
+      buttons: [
+        {
+          text: "Camera",
+          handler: this.takePicture,
+        },
+        {
+          text: "Files on device",
+        },
+      ],
+    });
+  }
+
+  async takePicture() {
+    const image = await Camera.getPhoto({
+      quality: 90,
+      allowEditing: true,
+      resultType: CameraResultType.Uri,
+    });
+
+    const imageUrl = image.webPath;
+
+    this.image.src = imageUrl;
   }
 }
