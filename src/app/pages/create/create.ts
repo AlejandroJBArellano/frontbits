@@ -20,6 +20,7 @@ import { AlertService } from "src/app/services/ui/alert.service";
 import { IHabit } from "../../interfaces/habits";
 import { UserData } from "../../providers/user-data";
 import { ApiService } from "../../services/api.service";
+import { SupabaseService } from "../../services/supabase.service";
 import { LoadingService } from "../../services/ui/loading.service";
 const congrats = ["Keep continue", "Go hard", "Very well", "Keep tracking it!"];
 
@@ -30,8 +31,13 @@ const congrats = ["Keep continue", "Go hard", "Very well", "Keep tracking it!"];
 })
 export class CreatePage implements AfterViewInit, OnInit {
   @ViewChild("mapCanvas", { static: true }) mapElement: ElementRef;
-  private declare image: {
+  private declare imageHabit: {
     src: string;
+    format: string;
+  };
+  private declare imagePublication: {
+    src: string;
+    format: string;
   };
   public max = new Date().toISOString();
   public publicationForm: UntypedFormGroup;
@@ -58,7 +64,8 @@ export class CreatePage implements AfterViewInit, OnInit {
     public formBuilder: UntypedFormBuilder,
     private userData: UserData,
     private alertService: AlertService,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private supabaseService: SupabaseService
   ) {
     this.publicationForm = formBuilder.group({
       habitId: ["", Validators.required],
@@ -128,6 +135,23 @@ export class CreatePage implements AfterViewInit, OnInit {
       habitId: this.habits[0]._id,
       rate: this.publicationForm.get("rate").value,
     };
+
+    const filePublication = await fetch(this.imagePublication.src)
+      .then((res) => res.blob())
+      .then(
+        (blob) =>
+          new File([blob], "XD", {
+            type: `image/${this.imagePublication.format}`,
+          })
+      );
+    const fileNamePublication = `${crypto.randomUUID()}.${
+      this.imagePublication.format
+    }`;
+    await this.supabaseService.uploadAvatar(
+      fileNamePublication,
+      filePublication
+    );
+
     if (publication.rate < 0 || publication.rate > 10) return;
     await this.api.CreatePublication(publication);
     this.publicationForm.reset();
@@ -151,6 +175,16 @@ export class CreatePage implements AfterViewInit, OnInit {
       description: this.habitForm.get("description").value,
       userId: this.user._id,
     };
+
+    const fileHabit = await fetch(this.imageHabit.src)
+      .then((res) => res.blob())
+      .then(
+        (blob) =>
+          new File([blob], "XD", { type: `image/${this.imageHabit.format}` })
+      );
+    const fileNameHabit = `${crypto.randomUUID()}.${this.imageHabit.format}`;
+    await this.supabaseService.uploadAvatar(fileNameHabit, fileHabit);
+
     await this.api.CreateHabit(habit);
     this.habitForm.reset();
     this.getHabits();
@@ -169,7 +203,7 @@ export class CreatePage implements AfterViewInit, OnInit {
       buttons: [
         {
           text: "Camera",
-          handler: this.takePicture,
+          handler: this.takePictureForPublication,
         },
         {
           text: "Files on device",
@@ -178,15 +212,41 @@ export class CreatePage implements AfterViewInit, OnInit {
     });
   }
 
-  async takePicture() {
+  public async takePictureForPublication() {
     const image = await Camera.getPhoto({
-      quality: 90,
+      quality: 50,
       allowEditing: true,
       resultType: CameraResultType.Uri,
+      width: 400,
+      height: 400,
     });
+
+    console.log(image);
 
     const imageUrl = image.webPath;
 
-    this.image.src = imageUrl;
+    this.imagePublication = {
+      src: imageUrl,
+      format: image.format,
+    };
+  }
+
+  public async takePictureForHabit() {
+    const image = await Camera.getPhoto({
+      quality: 50,
+      allowEditing: true,
+      resultType: CameraResultType.Uri,
+      width: 400,
+      height: 400,
+    });
+
+    console.log(image);
+
+    const imageUrl = image.webPath;
+
+    this.imageHabit = {
+      src: imageUrl,
+      format: image.format,
+    };
   }
 }
