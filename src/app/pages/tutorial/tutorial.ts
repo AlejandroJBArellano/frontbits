@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from "@angular/core";
+import { ChangeDetectorRef, Component } from "@angular/core";
 import { Router } from "@angular/router";
 
 import { MenuController } from "@ionic/angular";
@@ -44,11 +44,11 @@ export class TutorialPage {
       }
     });
 
-    this.menu.enable(false);
+    // this.menu.enable(false);
   }
 
   ionViewDidLeave() {
     // enable the root left menu when leaving the tutorial page
-    this.menu.enable(true);
+    // this.menu.enable(true);
   }
 }

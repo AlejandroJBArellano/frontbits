@@ -42,7 +42,6 @@ const routes: Routes = [
     loadChildren: () =>
       import("./pages/tutorial/tutorial.module").then((m) => m.TutorialModule),
     canLoad: [CheckTutorial],
-    canActivate: [AuthGuard],
   },
 ];
 

@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 
 import { UserData } from "../../providers/user-data";
 
+import { MenuController, ViewWillEnter } from "@ionic/angular";
 import { IUser } from "../../interfaces/user";
 
 @Component({
@@ -11,11 +12,19 @@ import { IUser } from "../../interfaces/user";
   templateUrl: "signup.html",
   styleUrls: ["./signup.scss"],
 })
-export class SignupPage {
+export class SignupPage implements ViewWillEnter {
   signup: IUser = { email: "", name: "", password: "" };
   submitted = false;
 
-  constructor(public router: Router, public userData: UserData) {}
+  constructor(
+    public router: Router,
+    public userData: UserData,
+    private menuCtrl: MenuController
+  ) {}
+
+  ionViewWillEnter() {
+    this.menuCtrl.enable(false);
+  }
 
   onSignup(form: NgForm) {
     this.submitted = true;

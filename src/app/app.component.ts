@@ -11,6 +11,7 @@ import { Storage } from "@ionic/storage-angular";
 
 import { UserData } from "./providers/user-data";
 import { AppCheckService } from "./services/app-check.service";
+import { ParseService } from "./services/parse.service";
 import { StorageService } from "./services/storage.service";
 
 @Component({
@@ -42,8 +43,9 @@ export class AppComponent implements OnInit {
       icon: "analytics",
     },
   ];
-  loggedIn = false;
-  dark = false;
+  declare loggedIn: boolean;
+  declare dark: boolean;
+  declare current: any;
 
   constructor(
     private menu: MenuController,
@@ -54,13 +56,18 @@ export class AppComponent implements OnInit {
     private swUpdate: SwUpdate,
     private toastCtrl: ToastController,
     private appCheck: AppCheckService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private parseService: ParseService
   ) {
     this.initializeApp();
   }
 
+  async setCurrent() {
+    this.current = await this.parseService.current();
+  }
+
   async ngOnInit() {
-    this.setToken()
+    this.setCurrent();
     this.checkLoginStatus();
     this.listenForLoginEvents();
 
@@ -83,12 +90,6 @@ export class AppComponent implements OnInit {
         .then(() => this.swUpdate.activateUpdate())
         .then(() => window.location.reload());
     });
-  }
-
-  setToken(){
-    this.appCheck.getToken().then(async e => {
-      this.storageService.set("appCheckToken", e.token)
-    }).catch(e => console.log(e))
   }
 
   initializeApp() {

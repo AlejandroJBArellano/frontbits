@@ -1,6 +1,12 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
-import { Config, IonList, IonRouterOutlet } from "@ionic/angular";
+import {
+  Config,
+  IonList,
+  IonRouterOutlet,
+  MenuController,
+  ViewWillEnter,
+} from "@ionic/angular";
 
 import { IHabit } from "../../interfaces/habits";
 import { ConferenceData } from "../../providers/conference-data";
@@ -20,7 +26,7 @@ import { ScheduleFilterPage } from "../schedule-filter/schedule-filter";
   templateUrl: "home.html",
   styleUrls: ["./home.scss"],
 })
-export class SchedulePage implements OnInit {
+export class SchedulePage implements OnInit, ViewWillEnter {
   // Gets a reference to the list element
   @ViewChild("scheduleList", { static: true }) scheduleList: IonList;
 
@@ -52,8 +58,13 @@ export class SchedulePage implements OnInit {
     private toastService: ToastService,
     private storageService: StorageService,
     private appCheck: AppCheckService,
-    private parseService: ParseService
+    private parseService: ParseService,
+    private menuCtrl: MenuController
   ) {}
+
+  ionViewWillEnter() {
+    this.menuCtrl.enable(true);
+  }
 
   ngOnInit() {
     this.getToken();
