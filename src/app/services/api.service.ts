@@ -105,7 +105,9 @@ export class ApiService {
       .toPromise();
   }
   CreateUser(user: IUser) {
-    return this.http.post<IUser>(this.concatenateUrl("/user"), user);
+    return this.http.post<IUser>(this.concatenateUrl("/user"), user, {
+      headers: this.headers,
+    });
   }
   CreateHabit(habit: any, headers?: IHeaders) {
     return this.http

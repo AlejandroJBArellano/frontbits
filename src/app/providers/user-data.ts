@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { IUser } from "../interfaces/user";
 import { ApiService } from "../services/api.service";
+import { ParseService } from "../services/parse.service";
 import { StorageService } from "../services/storage.service";
 
 @Injectable({
@@ -14,7 +15,8 @@ export class UserData {
 
   constructor(
     private storage: StorageService,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private parseService: ParseService
   ) {}
 
   hasFavorite(sessionName: string): boolean {
@@ -50,6 +52,7 @@ export class UserData {
     if (!this.user) {
       return Promise.reject("Something went wrong. Try Again");
     }
+    await this.parseService.signUp(user.email, user.password);
     await this.storage.set(this.HAS_LOGGED_IN, true);
     this.setUser(this.user);
     this.setUsername(this.user.email);

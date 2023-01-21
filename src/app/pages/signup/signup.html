@@ -27,6 +27,17 @@
       </ion-text>
 
       <ion-item>
+        <ion-label position="stacked" color="primary">Password</ion-label>
+        <ion-input [(ngModel)]="signup.password" name="name" type="password" #username="ngModel" required>
+        </ion-input>
+      </ion-item>
+      <ion-text color="danger">
+        <p [hidden]="username.valid || submitted === false" class="ion-padding-start">
+          Password is required
+        </p>
+      </ion-text>
+
+      <ion-item>
         <ion-label position="stacked" color="primary">Name</ion-label>
         <ion-input [(ngModel)]="signup.name" name="name" type="text" #username="ngModel" required>
         </ion-input>

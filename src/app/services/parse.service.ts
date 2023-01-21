@@ -19,7 +19,9 @@ export class ParseService {
   }
   public async signUp(email: string, password: string) {
     try {
-      const user = await Parse.User.signUp(email, password, {});
+      const user = await Parse.User.signUp(email, password, {
+        email,
+      });
       return Promise.resolve(user);
     } catch (error) {
       return Promise.reject(error);

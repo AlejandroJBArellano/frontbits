@@ -12,7 +12,7 @@ import { IUser } from "../../interfaces/user";
   styleUrls: ["./signup.scss"],
 })
 export class SignupPage {
-  signup: IUser = { email: "", name: "" };
+  signup: IUser = { email: "", name: "", password: "" };
   submitted = false;
 
   constructor(public router: Router, public userData: UserData) {}
@@ -22,7 +22,7 @@ export class SignupPage {
 
     if (form.valid) {
       this.userData.signup(this.signup);
-      this.router.navigateByUrl("/app/tabs/schedule");
+      this.router.navigateByUrl("/app/tabs/habits");
     }
   }
 }
