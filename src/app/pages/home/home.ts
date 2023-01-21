@@ -70,8 +70,6 @@ export class SchedulePage implements OnInit, ViewWillEnter {
     this.getToken();
     this.updateHabits();
 
-    console.log(this.habits, this.user);
-
     this.ios = this.config.get("mode") === "ios";
   }
 
@@ -81,6 +79,7 @@ export class SchedulePage implements OnInit, ViewWillEnter {
       .then((e) => {
         this.token = e.token;
       })
+      //TODO: present an alert of the error
       .catch((e) => console.log(e));
   }
 
@@ -93,7 +92,6 @@ export class SchedulePage implements OnInit, ViewWillEnter {
     // this.confData.getTimeline(this.dayIndex, this.queryText, this.excludeTracks, this.segment).subscribe((data: any) => {
     //   this.shownSessions = data.shownSessions;
     //   this.groups = data.groups;
-    //   console.log(this.groups)
     // });
     const loader = await this.loadingService.presentLoading({
       message: "Fetching data...",

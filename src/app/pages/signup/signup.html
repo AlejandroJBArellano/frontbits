@@ -10,7 +10,7 @@
     <img src="assets/img/appicon.svg" alt="Ionic Logo">
   </div>
 
-  <form #signupForm="ngForm" novalidate>
+  <form #signupForm="ngForm" novalidate (keyup.enter)="onSignup(signupForm)">
     <ion-list lines="none">
       <ion-item>
         <ion-label position="stacked" color="primary">Email</ion-label>
