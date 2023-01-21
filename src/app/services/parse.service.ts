@@ -43,4 +43,12 @@ export class ParseService {
       return Promise.reject(error);
     }
   }
+  public async current() {
+    try {
+      const user = await Parse.User.currentAsync();
+      return Promise.resolve(user);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
 }
