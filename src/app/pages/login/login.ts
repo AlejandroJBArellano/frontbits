@@ -13,7 +13,7 @@ import { LoadingService } from "../../services/ui/loading.service";
   styleUrls: ["./login.scss"],
 })
 export class LoginPage {
-  login: UserOptions = { email: "" };
+  login: UserOptions = { email: "", password: "" };
   submitted = false;
 
   constructor(
@@ -31,7 +31,7 @@ export class LoginPage {
     });
     try {
       await loader.present();
-      await this.userData.login(this.login.email);
+      await this.userData.login(this.login.email, this.login.password);
       this.router.navigateByUrl("/app/tabs/habits");
     } catch (error) {
       console.info(error);

@@ -34,13 +34,14 @@ export class UserData {
     }
   }
 
-  async login(email: string): Promise<boolean> {
+  async login(email: string, password: string): Promise<boolean> {
     this.user = await this.apiService.GetUser({
       email,
     });
     if (!this.user) {
       return Promise.reject("User does not exist");
     }
+    await this.parseService.logIn(email, password);
     await this.storage.set(this.HAS_LOGGED_IN, true);
     this.setUser(this.user);
     this.setUsername(email);
