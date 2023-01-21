@@ -17,4 +17,20 @@ export class ParseService {
       return Promise.reject(error);
     }
   }
+  public async signUp(email: string, password: string) {
+    try {
+      const user = await Parse.User.signUp(email, password, {});
+      return Promise.resolve(user);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+  public async logIn(email: string, password: string) {
+    try {
+      const user = await Parse.User.logIn(email, password);
+      return Promise.resolve(user);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
 }
