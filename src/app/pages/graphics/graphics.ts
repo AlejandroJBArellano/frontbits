@@ -97,8 +97,8 @@ export class GraphicsPage implements OnInit {
 
   public export(type: "png" | "xls" | "pdf") {
     // get the data as base64 or json object for json type - this will be helpful in ionic or SSR
-    this.exportAsService.get(this.exportAsConfig(type)).subscribe((content) => {
-      console.log(content);
-    });
+    this.exportAsService
+      .get(this.exportAsConfig(type))
+      .subscribe((content) => {});
   }
 }

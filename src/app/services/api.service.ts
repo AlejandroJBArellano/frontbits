@@ -4,6 +4,7 @@ import { Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
 import { IHabit } from "../interfaces/habits";
 import { IUser } from "../interfaces/user";
+import { AppCheckService } from "./app-check.service";
 
 interface IHeaders {
   [header: string]: string | string[];
@@ -12,8 +13,18 @@ interface IHeaders {
   providedIn: "root",
 })
 export class ApiService {
+  private declare headers: IHeaders;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private appCheckService: AppCheckService
+  ) {
+    this.appCheckService.getToken().then(({ token }) => {
+      this.headers = {
+        "X-Firebase-AppCheck": token,
+      };
+    });
+  }
 
   concatenateUrl(url: string) {
     return `${environment.api}${url}`;
@@ -25,6 +36,7 @@ export class ApiService {
     return this.http
       .get<IUser>(this.concatenateUrl("/user"), {
         params,
+        headers: this.headers,
       })
       .toPromise();
   }
@@ -34,6 +46,7 @@ export class ApiService {
     return this.http
       .get<IHabit>(this.concatenateUrl("/habit"), {
         params,
+        headers: this.headers,
       })
       .toPromise();
   }
@@ -41,7 +54,8 @@ export class ApiService {
     const params = new HttpParams().set("userId", id);
     return this.http
       .get<IHabit[]>(this.concatenateUrl("/"), {
-        params, headers
+        params,
+        headers: this.headers,
       })
       .toPromise();
   }
@@ -49,18 +63,21 @@ export class ApiService {
     const params = new HttpParams().set("userId", id);
     return this.http.get(this.concatenateUrl("/user/publications"), {
       params,
+      headers: this.headers,
     });
   }
   UserPublication(id: string) {
     const params = new HttpParams().set("id", id);
     return this.http.get(this.concatenateUrl("/user/publication/"), {
       params,
+      headers: this.headers,
     });
   }
   UserHabit(id: string) {
     const params = new HttpParams().set("id", id);
     return this.http.get(this.concatenateUrl("/user/habit/"), {
       params,
+      headers: this.headers,
     });
   }
   GetGraphicsRating(id: string, habitId: string) {
@@ -74,38 +91,48 @@ export class ApiService {
         }[];
       }>(this.concatenateUrl("/graphics/rating"), {
         params,
+        headers: this.headers,
       })
       .toPromise();
   }
 
   CreatePublication(publication: any, headers?: IHeaders) {
     return this.http
-      .post(this.concatenateUrl("/publication"), publication, {headers})
+      .post(this.concatenateUrl("/publication"), publication, {
+        headers: this.headers,
+      })
       .toPromise();
   }
   CreateUser(user: IUser) {
-    return this.http.post<IUser>(this.concatenateUrl("/user"), user);
+    return this.http.post<IUser>(this.concatenateUrl("/user"), user, {
+      headers: this.headers,
+    });
   }
   CreateHabit(habit: any, headers?: IHeaders) {
-    return this.http.post(this.concatenateUrl("/habit"), habit, {headers}).toPromise();
+    return this.http
+      .post(this.concatenateUrl("/habit"), habit, { headers: this.headers })
+      .toPromise();
   }
 
   UpdatePublication(publication: any) {
     const params = new HttpParams().set("id", publication.id);
     return this.http.put(this.concatenateUrl("/publication"), publication, {
       params,
+      headers: this.headers,
     });
   }
   UpdateUser(user: any) {
     const params = new HttpParams().set("id", user.id);
     return this.http.put(this.concatenateUrl("/user"), user, {
       params,
+      headers: this.headers,
     });
   }
   UpdateHabit(habit: any) {
     const params = new HttpParams().set("id", habit.id);
     return this.http.put(this.concatenateUrl("/habit"), habit, {
       params,
+      headers: this.headers,
     });
   }
 
@@ -113,18 +140,21 @@ export class ApiService {
     const params = new HttpParams().set("id", id);
     return this.http.delete(this.concatenateUrl("/publication"), {
       params,
+      headers: this.headers,
     });
   }
   DeleteUser(id: string) {
     const params = new HttpParams().set("id", id);
     return this.http.delete(this.concatenateUrl("/user"), {
       params,
+      headers: this.headers,
     });
   }
   DeleteHabit(id: string) {
     const params = new HttpParams().set("id", id);
     return this.http.delete(this.concatenateUrl("/habit"), {
       params,
+      headers: this.headers,
     });
   }
 }

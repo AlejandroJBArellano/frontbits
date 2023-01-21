@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { IUser } from "../interfaces/user";
 import { ApiService } from "../services/api.service";
+import { ParseService } from "../services/parse.service";
 import { StorageService } from "../services/storage.service";
 
 @Injectable({
@@ -14,7 +15,8 @@ export class UserData {
 
   constructor(
     private storage: StorageService,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private parseService: ParseService
   ) {}
 
   hasFavorite(sessionName: string): boolean {
@@ -32,13 +34,14 @@ export class UserData {
     }
   }
 
-  async login(email: string): Promise<boolean> {
+  async login(email: string, password: string): Promise<boolean> {
     this.user = await this.apiService.GetUser({
       email,
     });
     if (!this.user) {
       return Promise.reject("User does not exist");
     }
+    await this.parseService.logIn(email, password);
     await this.storage.set(this.HAS_LOGGED_IN, true);
     this.setUser(this.user);
     this.setUsername(email);
@@ -50,6 +53,7 @@ export class UserData {
     if (!this.user) {
       return Promise.reject("Something went wrong. Try Again");
     }
+    await this.parseService.signUp(user.email, user.password);
     await this.storage.set(this.HAS_LOGGED_IN, true);
     this.setUser(this.user);
     this.setUsername(this.user.email);
@@ -57,6 +61,7 @@ export class UserData {
   }
 
   async logout(): Promise<boolean> {
+    await this.parseService.logOut();
     await this.storage.remove(this.HAS_LOGGED_IN);
     await this.storage.remove("email");
     await this.storage.remove("user");
@@ -77,7 +82,6 @@ export class UserData {
 
   async getUsername(): Promise<string> {
     const value = await this.storage.get("email");
-    console.log(value);
     return value;
   }
 

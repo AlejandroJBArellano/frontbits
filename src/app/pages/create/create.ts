@@ -79,9 +79,7 @@ export class CreatePage implements AfterViewInit, OnInit {
   // public customProperty = "";
   // public customPropertyValues = [];
 
-  ngOnInit() {
-    console.log(this.max);
-  }
+  ngOnInit() {}
 
   async fetchData() {
     await this.getUser();
@@ -102,9 +100,7 @@ export class CreatePage implements AfterViewInit, OnInit {
     this.habits = await this.api.ListHabits(this.user._id);
   }
 
-  public onChangeCustomProperty() {
-    console.log("onChangeCustomProperty");
-  }
+  public onChangeCustomProperty() {}
 
   public async createPublication() {
     const loader = await this.loadingService.presentLoading({
@@ -113,7 +109,6 @@ export class CreatePage implements AfterViewInit, OnInit {
     });
     await loader.present();
 
-    console.log(this.publicationForm.value);
     if (!this.publicationForm.valid) return;
     const customProperties = [
       {
@@ -134,7 +129,6 @@ export class CreatePage implements AfterViewInit, OnInit {
       rate: this.publicationForm.get("rate").value,
     };
     if (publication.rate < 0 || publication.rate > 10) return;
-    console.log(publication);
     await this.api.CreatePublication(publication);
     this.publicationForm.reset();
     await loader.dismiss();
@@ -151,7 +145,6 @@ export class CreatePage implements AfterViewInit, OnInit {
       spinner: "circles",
     });
     await loader.present();
-    console.log(this.habitForm.value);
     if (!this.habitForm.valid) return;
     const habit = {
       title: this.habitForm.get("title").value,
@@ -159,7 +152,6 @@ export class CreatePage implements AfterViewInit, OnInit {
       userId: this.user._id,
     };
     await this.api.CreateHabit(habit);
-    console.log(habit);
     this.habitForm.reset();
     this.getHabits();
     await loader.dismiss();

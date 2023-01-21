@@ -11,6 +11,7 @@ import { Storage } from "@ionic/storage-angular";
 
 import { UserData } from "./providers/user-data";
 import { AppCheckService } from "./services/app-check.service";
+import { ParseService } from "./services/parse.service";
 import { StorageService } from "./services/storage.service";
 
 @Component({
@@ -42,8 +43,9 @@ export class AppComponent implements OnInit {
       icon: "analytics",
     },
   ];
-  loggedIn = false;
-  dark = false;
+  declare loggedIn: boolean;
+  dark = window.matchMedia("(prefers-color-scheme: dark)");
+  declare current: any;
 
   constructor(
     private menu: MenuController,
@@ -54,13 +56,18 @@ export class AppComponent implements OnInit {
     private swUpdate: SwUpdate,
     private toastCtrl: ToastController,
     private appCheck: AppCheckService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private parseService: ParseService
   ) {
     this.initializeApp();
   }
 
+  async setCurrent() {
+    this.current = await this.parseService.current();
+  }
+
   async ngOnInit() {
-    this.setToken()
+    this.setCurrent();
     this.checkLoginStatus();
     this.listenForLoginEvents();
 
@@ -85,12 +92,6 @@ export class AppComponent implements OnInit {
     });
   }
 
-  setToken(){
-    this.appCheck.getToken().then(async e => {
-      this.storageService.set("appCheckToken", e.token)
-    }).catch(e => console.log(e))
-  }
-
   initializeApp() {
     this.platform.ready().then(() => {
       if (this.platform.is("hybrid")) {
@@ -100,10 +101,9 @@ export class AppComponent implements OnInit {
     });
   }
 
-  checkLoginStatus() {
-    return this.userData.isLoggedIn().then((loggedIn) => {
-      return this.updateLoggedInStatus(loggedIn);
-    });
+  async checkLoginStatus() {
+    const loggedIn = await this.userData.isLoggedIn();
+    return this.updateLoggedInStatus(loggedIn);
   }
 
   updateLoggedInStatus(loggedIn: boolean) {
