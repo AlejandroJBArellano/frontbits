@@ -16,6 +16,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { Camera, CameraResultType } from "@capacitor/camera";
+import { ImageResizer, ImageResizerOptions } from "@ionic-native/image-resizer";
 import { AlertService } from "src/app/services/ui/alert.service";
 import { IHabit } from "../../interfaces/habits";
 import { UserData } from "../../providers/user-data";
@@ -23,13 +24,13 @@ import { ApiService } from "../../services/api.service";
 import { SupabaseService } from "../../services/supabase.service";
 import { LoadingService } from "../../services/ui/loading.service";
 const congrats = ["Keep continue", "Go hard", "Very well", "Keep tracking it!"];
-
 @Component({
   selector: "page-map",
   templateUrl: "create.html",
   styleUrls: ["./create.scss"],
 })
 export class CreatePage implements AfterViewInit, OnInit {
+  private imageResizer = ImageResizer;
   @ViewChild("mapCanvas", { static: true }) mapElement: ElementRef;
   private declare imageHabit: {
     src: string;
@@ -240,13 +241,22 @@ export class CreatePage implements AfterViewInit, OnInit {
       height: 400,
     });
 
-    console.log(image);
+    const options = {
+      uri: image.webPath,
+      quality: 50,
+      width: 500,
+      height: 500,
+    } as ImageResizerOptions;
 
-    const imageUrl = image.webPath;
+    this.imageResizer.resize(options).then((e) => {
+      console.log("e", e);
 
-    this.imageHabit = {
-      src: imageUrl,
-      format: image.format,
-    };
+      // const imageUrl = e;
+
+      // this.imageHabit = {
+      //   src: imageUrl,
+      //   format: image.format,
+      // };
+    });
   }
 }
