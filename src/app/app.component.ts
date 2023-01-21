@@ -44,7 +44,7 @@ export class AppComponent implements OnInit {
     },
   ];
   declare loggedIn: boolean;
-  declare dark: boolean;
+  dark = window.matchMedia("(prefers-color-scheme: dark)");
   declare current: any;
 
   constructor(
@@ -101,10 +101,9 @@ export class AppComponent implements OnInit {
     });
   }
 
-  checkLoginStatus() {
-    return this.userData.isLoggedIn().then((loggedIn) => {
-      return this.updateLoggedInStatus(loggedIn);
-    });
+  async checkLoginStatus() {
+    const loggedIn = await this.userData.isLoggedIn();
+    return this.updateLoggedInStatus(loggedIn);
   }
 
   updateLoggedInStatus(loggedIn: boolean) {

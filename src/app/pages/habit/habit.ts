@@ -21,7 +21,6 @@ export class HabitPage {
   ngOnInit() {
     const habitId = this.route.snapshot.paramMap.get("habitId");
     this.habitId = this.route.snapshot.paramMap.get("habitId");
-    console.log(habitId);
     this.fetchHabitInformation();
   }
 
@@ -34,9 +33,7 @@ export class HabitPage {
     // const res = await (
     //   await fetch("http://localhost:3000/api/habits/63942339eb0c2d389c69fc2a")
     // ).json();
-    // console.log("payload", res);
     this.habit = await this.apiService.GetHabit(this.habitId);
     await loader.dismiss();
-    console.log(this.habit);
   }
 }

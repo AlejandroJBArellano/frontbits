@@ -21,8 +21,6 @@ export class AppCheckService {
 
     this.app = initializeApp(environment.firebase);
 
-    console.log(this.app);
-
     // Create a ReCaptchaEnterpriseProvider instance using reCAPTCHA Enterprise.
     this.appCheck = initializeAppCheck(this.app, {
       provider: new ReCaptchaEnterpriseProvider(environment.reCaptchaProvider),
@@ -35,7 +33,6 @@ export class AppCheckService {
       const appCheckTokenResponse = await getToken(this.appCheck);
       return appCheckTokenResponse;
     } catch (err) {
-      console.log(err);
       return err;
     }
   }

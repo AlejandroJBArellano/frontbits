@@ -82,7 +82,6 @@ export class UserData {
 
   async getUsername(): Promise<string> {
     const value = await this.storage.get("email");
-    console.log(value);
     return value;
   }
 
