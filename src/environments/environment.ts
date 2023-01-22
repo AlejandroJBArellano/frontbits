@@ -1,6 +1,7 @@
 export const environment = {
-  production: false,
-  api: "http://localhost:4000",
+  production: true,
+  api: "https://backbits-production.up.railway.app",
+  // api: "http://localhost:4000",
   firebase: {
     apiKey: "AIzaSyCpyzpUfQCNvQxLeMeZyLGUuHCIDuK8H0I",
     authDomain: "grabis-1cf06.firebaseapp.com",

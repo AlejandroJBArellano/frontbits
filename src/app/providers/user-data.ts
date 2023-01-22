@@ -34,6 +34,15 @@ export class UserData {
     }
   }
 
+  public async invalidate() {
+    const username = await this.getUsername();
+    this.user = await this.apiService.GetUser({
+      email: username,
+    });
+
+    this.setUser(this.user);
+  }
+
   async login(email: string, password: string): Promise<boolean> {
     this.user = await this.apiService.GetUser({
       email,

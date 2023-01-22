@@ -85,7 +85,9 @@ export class CreatePage implements AfterViewInit, OnInit {
   // public customProperty = "";
   // public customPropertyValues = [];
 
-  ngOnInit() {}
+  async ngOnInit() {
+    await this.fetchData();
+  }
 
   async fetchData() {
     await this.getUser();
@@ -93,7 +95,6 @@ export class CreatePage implements AfterViewInit, OnInit {
   }
 
   async ngAfterViewInit() {
-    await this.fetchData();
     this.ios = this.config.get("mode") === "ios";
     const appEl = this.doc.querySelector("ion-app");
     let isDark = false;
@@ -142,6 +143,7 @@ export class CreatePage implements AfterViewInit, OnInit {
       filePublication
     );
     if (error) {
+      await loader.dismiss();
       await this.alertService.presentAlert({
         header: "Error trying to upload the image!",
         message: error.message,
@@ -190,6 +192,7 @@ export class CreatePage implements AfterViewInit, OnInit {
       fileHabit
     );
     if (error) {
+      await loader.dismiss();
       await this.alertService.presentAlert({
         header: "Error trying to upload the image!",
         message: error.message,

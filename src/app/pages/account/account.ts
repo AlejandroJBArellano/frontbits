@@ -4,7 +4,10 @@ import { Camera, CameraResultType } from "@capacitor/camera";
 
 import { IUser } from "../../interfaces/user";
 import { UserData } from "../../providers/user-data";
+import { ApiService } from "../../services/api.service";
+import { SupabaseService } from "../../services/supabase.service";
 import { AlertService } from "../../services/ui/alert.service";
+import { LoadingService } from "../../services/ui/loading.service";
 
 @Component({
   selector: "page-account",
@@ -15,9 +18,11 @@ export class AccountPage implements AfterViewInit {
   private image: {
     src: string;
     format: string;
+    changed: boolean;
   } = {
     src: "https://www.gravatar.com/avatar?d=mm&s=140",
     format: "png",
+    changed: false,
   };
   declare email: string;
   declare user: IUser;
@@ -25,7 +30,10 @@ export class AccountPage implements AfterViewInit {
   constructor(
     public router: Router,
     public userData: UserData,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private apiService: ApiService,
+    private supabaseService: SupabaseService,
+    private loadingService: LoadingService
   ) {}
 
   async ngAfterViewInit() {
@@ -35,6 +43,15 @@ export class AccountPage implements AfterViewInit {
 
   private async getUser() {
     this.user = await this.userData.getUser();
+    const {
+      data: { publicUrl: src },
+    } = this.supabaseService.getPublicUrl(this.user.avatarUrl);
+
+    this.image = {
+      src,
+      format: "",
+      changed: true,
+    };
   }
 
   // Present an alert with the current username populated
@@ -97,13 +114,55 @@ export class AccountPage implements AfterViewInit {
     this.image = {
       src: imageUrl,
       format: image.format,
+      changed: true,
     };
+  }
+
+  public async upload() {
+    const loader = await this.loadingService.presentLoading({
+      message: "Uploading avatar",
+      spinner: "circles",
+    });
+    await loader.present();
+    const file = await fetch(this.image.src)
+      .then((res) => res.blob())
+      .then(
+        (blob) => new File([blob], "XD", { type: `image/${this.image.format}` })
+      );
+
+    const fileName = `${crypto.randomUUID()}.${this.image.format}`;
+
+    const { data, error } = await this.supabaseService.uploadAvatar(
+      fileName,
+      file
+    );
+
+    if (error) {
+      await loader.dismiss();
+      await this.alertService.presentAlert({
+        header: "Error trying to upload the image!",
+        message: error.message,
+        buttons: ["Ok!"],
+      });
+      return;
+    }
+
+    console.log(this.user);
+
+    await this.apiService
+      .UpdateUser({
+        ...this.user,
+        avatarUrl: data.path,
+      })
+      .toPromise();
+    await loader.dismiss();
   }
 
   public unSetImg() {
     this.image = {
       src: "https://www.gravatar.com/avatar?d=mm&s=140",
       format: "png",
+      changed: false,
     };
   }
 }

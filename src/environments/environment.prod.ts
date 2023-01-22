@@ -1,5 +1,5 @@
 export const environment = {
-  production: false,
+  production: true,
   api: "https://backbits-production.up.railway.app",
   firebase: {
     apiKey: "AIzaSyCpyzpUfQCNvQxLeMeZyLGUuHCIDuK8H0I",

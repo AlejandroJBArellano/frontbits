@@ -115,25 +115,29 @@ export class ApiService {
   }
 
   UpdatePublication(publication: any) {
-    const params = new HttpParams().set("id", publication.id);
-    return this.http.put(this.concatenateUrl("/publication"), publication, {
-      params,
-      headers: this.headers,
-    });
+    const params = new HttpParams().set("_id", publication._id);
+    return this.http
+      .put(this.concatenateUrl("/publication"), publication, {
+        params,
+        headers: this.headers,
+      })
+      .toPromise();
   }
   UpdateUser(user: any) {
-    const params = new HttpParams().set("id", user.id);
+    const params = new HttpParams().set("_id", user._id);
     return this.http.put(this.concatenateUrl("/user"), user, {
       params,
       headers: this.headers,
     });
   }
   UpdateHabit(habit: any) {
-    const params = new HttpParams().set("id", habit.id);
-    return this.http.put(this.concatenateUrl("/habit"), habit, {
-      params,
-      headers: this.headers,
-    });
+    const params = new HttpParams().set("_id", habit._id);
+    return this.http
+      .put(this.concatenateUrl("/habit"), habit, {
+        params,
+        headers: this.headers,
+      })
+      .toPromise();
   }
 
   DeletePublication(id: string) {
