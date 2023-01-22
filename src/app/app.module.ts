@@ -10,6 +10,7 @@ import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
+import { PublicationComponent } from './pages/publication/publication.component';
 @NgModule({
   imports: [
     BrowserModule,
@@ -22,7 +23,7 @@ import { AppComponent } from "./app.component";
       enabled: environment.production,
     }),
   ],
-  declarations: [AppComponent],
+  declarations: [AppComponent, PublicationComponent],
   providers: [InAppBrowser],
   bootstrap: [AppComponent],
 })
