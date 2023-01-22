@@ -16,7 +16,6 @@ import {
   Validators,
 } from "@angular/forms";
 import { Camera, CameraResultType } from "@capacitor/camera";
-import { ImageResizer, ImageResizerOptions } from "@ionic-native/image-resizer";
 import { AlertService } from "src/app/services/ui/alert.service";
 import { IHabit } from "../../interfaces/habits";
 import { UserData } from "../../providers/user-data";
@@ -30,13 +29,12 @@ const congrats = ["Keep continue", "Go hard", "Very well", "Keep tracking it!"];
   styleUrls: ["./create.scss"],
 })
 export class CreatePage implements AfterViewInit, OnInit {
-  private imageResizer = ImageResizer;
   @ViewChild("mapCanvas", { static: true }) mapElement: ElementRef;
-  private declare imageHabit: {
+  public declare imageHabit: {
     src: string;
     format: string;
   };
-  private declare imagePublication: {
+  public declare imagePublication: {
     src: string;
     format: string;
   };
@@ -128,15 +126,6 @@ export class CreatePage implements AfterViewInit, OnInit {
         value: this.publicationForm.get("remarkables").value,
       },
     ];
-    const publication = {
-      title: this.publicationForm.get("title").value,
-      description: this.publicationForm.get("description").value,
-      customProperties,
-      userId: this.user._id,
-      habitId: this.habits[0]._id,
-      rate: this.publicationForm.get("rate").value,
-    };
-
     const filePublication = await fetch(this.imagePublication.src)
       .then((res) => res.blob())
       .then(
@@ -148,10 +137,27 @@ export class CreatePage implements AfterViewInit, OnInit {
     const fileNamePublication = `${crypto.randomUUID()}.${
       this.imagePublication.format
     }`;
-    await this.supabaseService.uploadAvatar(
+    const { data, error } = await this.supabaseService.uploadAvatar(
       fileNamePublication,
       filePublication
     );
+    if (error) {
+      await this.alertService.presentAlert({
+        header: "Error trying to upload the image!",
+        message: error.message,
+        buttons: ["Ok!"],
+      });
+      return;
+    }
+    const publication = {
+      title: this.publicationForm.get("title").value,
+      description: this.publicationForm.get("description").value,
+      customProperties,
+      userId: this.user._id,
+      habitId: this.habits[0]._id,
+      rate: this.publicationForm.get("rate").value,
+      urlImg: data.path,
+    };
 
     if (publication.rate < 0 || publication.rate > 10) return;
     await this.api.CreatePublication(publication);
@@ -171,11 +177,6 @@ export class CreatePage implements AfterViewInit, OnInit {
     });
     await loader.present();
     if (!this.habitForm.valid) return;
-    const habit = {
-      title: this.habitForm.get("title").value,
-      description: this.habitForm.get("description").value,
-      userId: this.user._id,
-    };
 
     const fileHabit = await fetch(this.imageHabit.src)
       .then((res) => res.blob())
@@ -184,7 +185,26 @@ export class CreatePage implements AfterViewInit, OnInit {
           new File([blob], "XD", { type: `image/${this.imageHabit.format}` })
       );
     const fileNameHabit = `${crypto.randomUUID()}.${this.imageHabit.format}`;
-    await this.supabaseService.uploadAvatar(fileNameHabit, fileHabit);
+    const { data, error } = await this.supabaseService.uploadAvatar(
+      fileNameHabit,
+      fileHabit
+    );
+    if (error) {
+      await this.alertService.presentAlert({
+        header: "Error trying to upload the image!",
+        message: error.message,
+        buttons: ["Ok!"],
+      });
+      return;
+    }
+    const habit = {
+      title: this.habitForm.get("title").value,
+      description: this.habitForm.get("description").value,
+      userId: this.user._id,
+      urlImg: data.path,
+    };
+
+    this.unSetImgHabit();
 
     await this.api.CreateHabit(habit);
     this.habitForm.reset();
@@ -194,22 +214,6 @@ export class CreatePage implements AfterViewInit, OnInit {
       header: "Habit created!",
       subHeader: "Enjoy this new crossing",
       buttons: ["Thanks!"],
-    });
-  }
-
-  public async selectFileOrigin() {
-    //TODO: Check if it does this: "Prompt the user to pick a photo from an album, or take a new photo with the camera."
-    const alert = this.alertService.presentAlert({
-      header: "Attach media",
-      buttons: [
-        {
-          text: "Camera",
-          handler: this.takePictureForPublication,
-        },
-        {
-          text: "Files on device",
-        },
-      ],
     });
   }
 
@@ -241,22 +245,19 @@ export class CreatePage implements AfterViewInit, OnInit {
       height: 400,
     });
 
-    const options = {
-      uri: image.webPath,
-      quality: 50,
-      width: 500,
-      height: 500,
-    } as ImageResizerOptions;
+    const imageUrl = image.webPath;
 
-    this.imageResizer.resize(options).then((e) => {
-      console.log("e", e);
+    this.imageHabit = {
+      src: imageUrl,
+      format: image.format,
+    };
+  }
 
-      // const imageUrl = e;
+  public unSetImgPublication() {
+    this.imagePublication = undefined;
+  }
 
-      // this.imageHabit = {
-      //   src: imageUrl,
-      //   format: image.format,
-      // };
-    });
+  public unSetImgHabit() {
+    this.imageHabit = undefined;
   }
 }

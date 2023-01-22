@@ -1,6 +1,8 @@
 import { AfterViewInit, Component } from "@angular/core";
 import { Router } from "@angular/router";
+import { Camera, CameraResultType } from "@capacitor/camera";
 
+import { IUser } from "../../interfaces/user";
 import { UserData } from "../../providers/user-data";
 import { AlertService } from "../../services/ui/alert.service";
 
@@ -10,7 +12,15 @@ import { AlertService } from "../../services/ui/alert.service";
   styleUrls: ["./account.scss"],
 })
 export class AccountPage implements AfterViewInit {
-  email: string;
+  private image: {
+    src: string;
+    format: string;
+  } = {
+    src: "https://www.gravatar.com/avatar?d=mm&s=140",
+    format: "png",
+  };
+  declare email: string;
+  declare user: IUser;
 
   constructor(
     public router: Router,
@@ -18,12 +28,13 @@ export class AccountPage implements AfterViewInit {
     private alertService: AlertService
   ) {}
 
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
     this.getUsername();
+    await this.getUser();
   }
 
-  updatePicture() {
-    console.log("Clicked to update picture");
+  private async getUser() {
+    this.user = await this.userData.getUser();
   }
 
   // Present an alert with the current username populated
@@ -68,5 +79,31 @@ export class AccountPage implements AfterViewInit {
 
   support() {
     this.router.navigateByUrl("/support");
+  }
+
+  public async takePicture() {
+    const image = await Camera.getPhoto({
+      quality: 50,
+      allowEditing: true,
+      resultType: CameraResultType.Uri,
+      width: 400,
+      height: 400,
+    });
+
+    console.log(image);
+
+    const imageUrl = image.webPath;
+
+    this.image = {
+      src: imageUrl,
+      format: image.format,
+    };
+  }
+
+  public unSetImg() {
+    this.image = {
+      src: "https://www.gravatar.com/avatar?d=mm&s=140",
+      format: "png",
+    };
   }
 }

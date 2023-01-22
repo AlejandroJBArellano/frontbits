@@ -34,7 +34,7 @@
         </ion-text>
         <div style="position: relative; width: 50%; margin: 0 auto;" *ngIf="imageHabit">
           <ion-img [src]="imageHabit.src"></ion-img>
-          <span style="position: absolute; top: 2%; right:2%; color: red; background-color: black;">x</span>
+          <span (click)="unSetImgHabit()" style="position: absolute; top: 2%; right:2%; color: red; background-color: black;">x</span>
         </div>
       </ion-item>
       <ion-row>
@@ -74,7 +74,7 @@
         </ion-text>
         <div style="position: relative; width: 50%; margin: 0 auto;" *ngIf="imagePublication">
           <ion-img [src]="imagePublication.src"></ion-img>
-          <span style="position: absolute; top: 2%; right:2%; color: red; background-color: black;">x</span>
+          <span (click)="unSetImgPublication()" style="position: absolute; top: 2%; right:2%; color: red; background-color: black;">x</span>
         </div>
       </ion-item>
       <ion-item counter="true">

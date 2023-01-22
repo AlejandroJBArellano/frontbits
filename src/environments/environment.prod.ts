@@ -16,5 +16,4 @@ export const environment = {
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6Z2R2dnV4d2NmcXpsc25tbWlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzQyODMxNTQsImV4cCI6MTk4OTg1OTE1NH0.o12GuIXDUK99QdPbLr502UL7ofDZUF60n9iAFS5c3IY",
   appIdBack4App: "6SFVl6LVVRwdaAggH1rxtWtxE3chgwOIsKyh7ZEF",
   jsKeyBack4App: "ZrpwIDpnokhabwyxsw14By6xgGPTTUmgkSKpXbNX",
-  appCheckToken: "399371E8-01A9-45D1-8336-5C17A000A559",
 };

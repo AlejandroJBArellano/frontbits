@@ -14,10 +14,22 @@ export class SupabaseService {
   }
 
   downLoadImage(path: string) {
-    return this.supabase.storage.from("imagePublication").download(path);
+    return this.supabase.storage.from("grabits").download(path);
   }
 
   uploadAvatar(filePath: string, file: File) {
-    return this.supabase.storage.from("grabits").upload(filePath, file);
+    return this.supabase.storage.from("grabits").upload(filePath, file, {
+      upsert: true,
+    });
+  }
+
+  getPublicUrl(path: string) {
+    return this.supabase.storage.from("grabits").getPublicUrl(path, {
+      transform: {
+        width: 400,
+        height: 400,
+        resize: "cover",
+      },
+    });
   }
 }
