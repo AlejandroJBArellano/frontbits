@@ -25,11 +25,12 @@ export class SupabaseService {
 
   getPublicUrl(path: string) {
     return this.supabase.storage.from("grabits").getPublicUrl(path, {
-      transform: {
-        width: 400,
-        height: 400,
-        resize: "cover",
-      },
+      // TODO: Update when we can use supabase pro
+      // transform: {
+      // width: 400,
+      // height: 400,
+      // resize: "cover",
+      // },
     });
   }
 }
