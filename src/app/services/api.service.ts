@@ -109,9 +109,13 @@ export class ApiService {
       .toPromise();
   }
   CreateUser(user: IUser) {
-    return this.http.post<IUser>(this.concatenateUrl("/user"), user, {
-      headers: this.headers,
-    });
+    return this.http.post<{ user: IUser; error: any }>(
+      this.concatenateUrl("/user"),
+      user,
+      {
+        headers: this.headers,
+      }
+    );
   }
   CreateHabit(habit: any, headers?: IHeaders) {
     return this.http
@@ -128,12 +132,16 @@ export class ApiService {
       })
       .toPromise();
   }
-  UpdateUser(user: any) {
+  UpdateUser(user: any): Observable<IUser> {
     const params = new HttpParams().set("_id", user._id);
-    return this.http.put(this.concatenateUrl("/user"), user, {
-      params,
-      headers: this.headers,
-    });
+    return this.http.put<IUser>(
+      this.concatenateUrl(`/user/${user._id}`),
+      user,
+      {
+        params,
+        headers: this.headers,
+      }
+    );
   }
   UpdateHabit(habit: any) {
     const params = new HttpParams().set("_id", habit._id);

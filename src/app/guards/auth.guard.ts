@@ -8,6 +8,7 @@ import {
   UrlTree,
 } from "@angular/router";
 import { Observable } from "rxjs";
+import { UserData } from "../providers/user-data";
 import { ParseService } from "../services/parse.service";
 
 @Injectable({
@@ -15,7 +16,11 @@ import { ParseService } from "../services/parse.service";
 })
 export class AuthGuard implements CanActivate, CanActivateChild {
   declare user: any;
-  constructor(private parseService: ParseService, private router: Router) {}
+  constructor(
+    private parseService: ParseService,
+    private router: Router,
+    private userData: UserData
+  ) {}
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
@@ -24,13 +29,12 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    return this.parseService.current().then((user) => {
-      this.user = user;
-      if (!user) {
+    return this.userData.getUser().then((user) => {
+      if (user) return true;
+      else {
         this.router.navigateByUrl("/login");
         return false;
       }
-      return true;
     });
   }
   canActivateChild(

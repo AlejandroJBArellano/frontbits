@@ -45,30 +45,50 @@ export class AccountPage implements AfterViewInit {
 
   private async getUser() {
     this.user = await this.userData.getUser();
-    const {
-      data: { publicUrl: src },
-    } = this.supabaseService.getPublicUrl(this.user.avatarUrl);
+    if (this.user.avatarUrl) {
+      const {
+        data: { publicUrl: src },
+      } = this.supabaseService.getPublicUrl(this.user.avatarUrl);
 
-    this.image = {
-      src,
-      format: "",
-      changed: true,
-    };
+      this.image = {
+        src,
+        format: "",
+        changed: true,
+      };
+    }
   }
 
   // Present an alert with the current username populated
   // clicking OK will update the username and display it
   // clicking Cancel will close the alert and do nothing
   async changeUsername() {
-    this.alertService.presentAlert({
+    await this.alertService.presentAlert({
       header: "Change Username",
       buttons: [
         "Cancel",
         {
           text: "Ok",
-          handler: (data: any) => {
-            this.userData.setUsername(data.username);
-            this.getUsername();
+          handler: async ({ email, name }: any) => {
+            console.log(email, name);
+            try {
+              const message =
+                email !== this.user.email
+                  ? "Log in in the app with the new email :)"
+                  : "";
+              await this.userData.changeUser({ ...this.user, email, name });
+              await this.alertService.presentAlert({
+                header: "Success!",
+                message,
+                buttons: ["OK!"],
+              });
+              await this.userData.logout();
+            } catch (error) {
+              await this.alertService.presentAlert({
+                header: "Error! Try again later.",
+                message: JSON.stringify(error),
+                buttons: ["OK!"],
+              });
+            }
           },
         },
       ],
@@ -191,6 +211,9 @@ export class AccountPage implements AfterViewInit {
                   {
                     text: "Perfect 😁!",
                     role: "cancel",
+                    handler: () => {
+                      this.userData.logout();
+                    },
                   },
                 ],
               });
@@ -199,7 +222,7 @@ export class AccountPage implements AfterViewInit {
                 header: "Error",
                 buttons: [
                   {
-                    text: "An error happened trying to !",
+                    text: "An error happened in the operation! Try again later.",
                     role: "cancel",
                   },
                 ],

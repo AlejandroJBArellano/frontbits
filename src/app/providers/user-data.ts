@@ -58,15 +58,25 @@ export class UserData {
   }
 
   async signup(user: IUser): Promise<boolean> {
-    this.user = await this.apiService.CreateUser(user).toPromise();
-    if (!this.user) {
-      return Promise.reject("Something went wrong. Try Again");
+    try {
+      const { user: userData, error } = await this.apiService
+        .CreateUser(user)
+        .toPromise();
+      if (error) {
+        return Promise.reject(error);
+      }
+      this.user = userData;
+      if (!this.user) {
+        return Promise.reject("Something went wrong. Try Again");
+      }
+      await this.parseService.signUp(user.email, user.password);
+      await this.storage.set(this.HAS_LOGGED_IN, true);
+      this.setUser(this.user);
+      this.setUsername(this.user.email);
+      return window.dispatchEvent(new CustomEvent("user:signup"));
+    } catch (error) {
+      return Promise.reject(error);
     }
-    await this.parseService.signUp(user.email, user.password);
-    await this.storage.set(this.HAS_LOGGED_IN, true);
-    this.setUser(this.user);
-    this.setUsername(this.user.email);
-    return window.dispatchEvent(new CustomEvent("user:signup"));
   }
 
   async logout(): Promise<boolean> {
@@ -75,6 +85,21 @@ export class UserData {
     await this.storage.remove("email");
     await this.storage.remove("user");
     return window.dispatchEvent(new CustomEvent("user:logout"));
+  }
+
+  public async changeUser({ email, name, _id, avatarUrl }: IUser) {
+    try {
+      const user = await this.apiService
+        .UpdateUser({ email, name, _id, avatarUrl })
+        .toPromise();
+      console.log("", user);
+      await this.parseService.editUser(email);
+      await this.setUser(user);
+      await this.setUsername(user.email);
+      return Promise.resolve(user);
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
 
   setUsername(email: string): Promise<any> {
@@ -86,6 +111,10 @@ export class UserData {
   }
 
   async getUser(): Promise<IUser> {
+    const user = await this.parseService.current();
+    if (!user) {
+      return Promise.reject(null);
+    }
     return this.storage.get("user");
   }
 

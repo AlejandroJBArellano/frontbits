@@ -6,6 +6,7 @@ import { UserData } from "../../providers/user-data";
 
 import { MenuController, ViewWillEnter } from "@ionic/angular";
 import { IUser } from "../../interfaces/user";
+import { AlertService } from "../../services/ui/alert.service";
 
 @Component({
   selector: "page-signup",
@@ -19,19 +20,31 @@ export class SignupPage implements ViewWillEnter {
   constructor(
     public router: Router,
     public userData: UserData,
-    private menuCtrl: MenuController
+    private menuCtrl: MenuController,
+    private alertService: AlertService
   ) {}
 
   ionViewWillEnter() {
     this.menuCtrl.enable(false);
   }
 
-  onSignup(form: NgForm) {
+  async onSignup(form: NgForm) {
     this.submitted = true;
 
     if (form.valid) {
-      this.userData.signup(this.signup);
-      this.router.navigateByUrl("/app/tabs/habits");
+      await this.userData.signup(this.signup);
+      await this.alertService.presentAlert({
+        header: "Welcome 😁",
+        subHeader: "Successfully signed up! ",
+        buttons: [
+          {
+            text: "Thanks!",
+            handler: () => {
+              this.router.navigateByUrl("/app/tabs/habits");
+            },
+          },
+        ],
+      });
     }
   }
 }

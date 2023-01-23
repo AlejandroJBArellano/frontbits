@@ -123,6 +123,7 @@ export class AppComponent implements OnInit {
 
     window.addEventListener("user:logout", () => {
       this.updateLoggedInStatus(false);
+      return this.router.navigateByUrl("/login");
     });
   }
 
