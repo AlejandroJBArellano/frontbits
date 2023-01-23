@@ -66,7 +66,7 @@
       <ion-item>
         <ion-label position="fixed">Date</ion-label>
         <!-- <ion-input formControlName="title" type="date"></ion-input> -->
-        <ion-datetime [value]="max" [max]="max" formControlName="title" display-format="DD.MM.YYYY HH:mm" picker-format="DD.MM.YYYY HH:mm" hourCycle="h12"></ion-datetime>
+        <ion-datetime formControlName="title" display-format="DD.MM.YYYY HH:mm" picker-format="DD.MM.YYYY HH:mm" hourCycle="h12"></ion-datetime>
       </ion-item>
       <ion-item>
         <ion-text color="primary" (click)="takePictureForPublication()" *ngIf="!imagePublication">
@@ -89,6 +89,23 @@
         <ion-label position="floating">Points to mark</ion-label>
         <ion-textarea autoGrow autocapitalize [maxlength]="10000" formControlName="remarkables"></ion-textarea>
       </ion-item>
+      <div formArrayName="customProperties">
+        <div *ngFor="let customProp of getCtrl('customProperties', publicationForm)?.controls; index as i">
+          <div [formGroupName]="i">
+            <ion-item>
+              <ion-label>Name</ion-label>
+              <ion-input required type="text" placeholder="Awesome Input" formControlName="key"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label>Value</ion-label>
+              <ion-input type="text" placeholder="Awesome Input" formControlName="value"></ion-input>
+            </ion-item>
+          </div>
+        </div>
+      </div>
+      <ion-button (click)="addCustomProperty()" expand="block" fill="clear" shape="round">
+        Add custom field
+      </ion-button>
       <ion-item>
         <ion-label>Rating in base of 10</ion-label>
         <ion-input type="number" formControlName="rate" placeholder="9"></ion-input>

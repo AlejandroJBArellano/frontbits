@@ -11,6 +11,9 @@ import { Config, Platform } from "@ionic/angular";
 import { ConferenceData } from "../../providers/conference-data";
 
 import {
+  FormArray,
+  FormControl,
+  FormGroup,
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators,
@@ -66,13 +69,14 @@ export class CreatePage implements AfterViewInit, OnInit {
     private loadingService: LoadingService,
     private supabaseService: SupabaseService
   ) {
-    this.publicationForm = formBuilder.group({
-      habitId: ["", Validators.required],
-      title: ["", [Validators.required]],
-      description: ["", [Validators.required]],
-      improvables: ["", Validators.required],
-      remarkables: ["", Validators.required],
-      rate: [0, Validators.required],
+    this.publicationForm = new FormGroup({
+      habitId: new FormControl("", [Validators.required]),
+      title: new FormControl("", [Validators.required]),
+      description: new FormControl(""),
+      improvables: new FormControl("", [Validators.required]),
+      remarkables: new FormControl("", [Validators.required]),
+      rate: new FormControl(0, [Validators.required]),
+      customProperties: new FormArray([]),
     });
     this.habitForm = formBuilder.group({
       title: ["", Validators.required],
@@ -80,10 +84,23 @@ export class CreatePage implements AfterViewInit, OnInit {
     });
   }
 
-  private declare user;
+  public initFormCustomProperty() {
+    return new FormGroup({
+      key: new FormControl("", [Validators.required]),
+      value: new FormControl(""),
+    });
+  }
 
-  // public customProperty = "";
-  // public customPropertyValues = [];
+  public addCustomProperty() {
+    const ref = this.publicationForm.get("customProperties") as FormArray;
+    ref.push(this.initFormCustomProperty());
+  }
+
+  public getCtrl(key: string, form: FormGroup): any {
+    return form.get(key);
+  }
+
+  private declare user;
 
   async ngOnInit() {
     await this.fetchData();
@@ -116,7 +133,13 @@ export class CreatePage implements AfterViewInit, OnInit {
     });
     await loader.present();
 
-    if (!this.publicationForm.valid) return;
+    if (!this.publicationForm.valid) {
+      await loader.dismiss();
+      await this.alertService.presentAlert({
+        message: JSON.stringify(this.publicationForm.value),
+      });
+      return;
+    }
     const customProperties = [
       {
         key: "improvables",
@@ -127,42 +150,56 @@ export class CreatePage implements AfterViewInit, OnInit {
         value: this.publicationForm.get("remarkables").value,
       },
     ];
-    const filePublication = await fetch(this.imagePublication.src)
-      .then((res) => res.blob())
-      .then(
-        (blob) =>
-          new File([blob], "XD", {
-            type: `image/${this.imagePublication.format}`,
-          })
-      );
-    const fileNamePublication = `${crypto.randomUUID()}.${
-      this.imagePublication.format
-    }`;
-    const { data, error } = await this.supabaseService.uploadAvatar(
-      fileNamePublication,
-      filePublication
-    );
-    if (error) {
-      await loader.dismiss();
-      await this.alertService.presentAlert({
-        header: "Error trying to upload the image!",
-        message: error.message,
-        buttons: ["Ok!"],
-      });
-      return;
-    }
+    console.log(this.publicationForm.get("customProperties").value);
     const publication = {
       title: this.publicationForm.get("title").value,
       description: this.publicationForm.get("description").value,
-      customProperties,
+      customProperties: [
+        ...customProperties,
+        ...this.publicationForm.get("customProperties").value,
+      ],
       userId: this.user._id,
       habitId: this.habits[0]._id,
       rate: this.publicationForm.get("rate").value,
-      urlImg: data.path,
+      urlImg: "",
     };
-
-    if (publication.rate < 0 || publication.rate > 10) return;
-    await this.api.CreatePublication(publication);
+    if (this.imagePublication && this.imagePublication.src) {
+      const filePublication = await fetch(this.imagePublication.src)
+        .then((res) => res.blob())
+        .then(
+          (blob) =>
+            new File([blob], "XD", {
+              type: `image/${this.imagePublication.format}`,
+            })
+        );
+      const fileNamePublication = `${crypto.randomUUID()}.${
+        this.imagePublication.format
+      }`;
+      const { data, error } = await this.supabaseService.uploadAvatar(
+        fileNamePublication,
+        filePublication
+      );
+      if (error) {
+        await loader.dismiss();
+        await this.alertService.presentAlert({
+          header: "Error trying to upload the image!",
+          message: error.message,
+          buttons: ["Ok!"],
+        });
+        return;
+      }
+      publication.urlImg = data.path;
+    }
+    this.unSetImgPublication();
+    try {
+      await this.api.CreatePublication(publication);
+    } catch (error) {
+      await this.alertService.presentAlert({
+        message: error,
+      });
+      await loader.dismiss();
+      return;
+    }
     this.publicationForm.reset();
     await loader.dismiss();
     await this.alertService.presentAlert({
