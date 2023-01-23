@@ -8,4 +8,5 @@ export interface IPublication {
   updatedAt?: string;
   userId: string;
   _id: string;
+  urlImg?: string;
 }

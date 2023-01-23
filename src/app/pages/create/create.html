@@ -18,7 +18,7 @@
 </ion-header>
 
 <ion-content>
-  <form [formGroup]="habitForm" (ngSubmit)="createHabit()" *ngIf="segment === 'habits'">
+  <form [formGroup]="habitForm" (ngSubmit)="createHabit()" *ngIf="segment === 'habits'" (keyup.enter)="createHabit()">
     <ion-list>
       <ion-item>
         <ion-label>Title</ion-label>
@@ -27,6 +27,15 @@
       <ion-item>
         <ion-label>Description</ion-label>
         <ion-input formControlName="description" type="text" placeholder="Take one hour of class ⌛"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-text color="primary" (click)="takePictureForHabit()" *ngIf="!imageHabit">
+          <p>Attach picture for habit</p>
+        </ion-text>
+        <div style="position: relative; width: 50%; margin: 0 auto;" *ngIf="imageHabit">
+          <ion-img [src]="imageHabit.src"></ion-img>
+          <span (click)="unSetImgHabit()" style="position: absolute; top: 2%; right:2%; color: red; background-color: black;">x</span>
+        </div>
       </ion-item>
       <ion-row>
         <ion-col>
@@ -58,6 +67,15 @@
         <ion-label position="fixed">Date</ion-label>
         <!-- <ion-input formControlName="title" type="date"></ion-input> -->
         <ion-datetime [value]="max" [max]="max" formControlName="title" display-format="DD.MM.YYYY HH:mm" picker-format="DD.MM.YYYY HH:mm" hourCycle="h12"></ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-text color="primary" (click)="takePictureForPublication()" *ngIf="!imagePublication">
+          <p>Attach picture for this publication</p>
+        </ion-text>
+        <div style="position: relative; width: 50%; margin: 0 auto;" *ngIf="imagePublication">
+          <ion-img [src]="imagePublication.src"></ion-img>
+          <span (click)="unSetImgPublication()" style="position: absolute; top: 2%; right:2%; color: red; background-color: black;">x</span>
+        </div>
       </ion-item>
       <ion-item counter="true">
         <ion-label position="floating">Description</ion-label>

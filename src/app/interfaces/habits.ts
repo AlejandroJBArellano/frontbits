@@ -11,4 +11,5 @@ export interface IHabit {
   userId?: string | undefined;
   _id?: string | undefined;
   createdAt?: string;
+  urlImg?: string;
 }

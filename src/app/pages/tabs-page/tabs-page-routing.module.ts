@@ -1,6 +1,7 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { SchedulePage } from "../home/home";
+import { PublicationComponent } from "../publication/publication.component";
 import { TabsPage } from "./tabs-page";
 
 const routes: Routes = [
@@ -38,6 +39,10 @@ const routes: Routes = [
               import("../speaker-list/speaker-list.module").then(
                 (m) => m.SpeakerListModule
               ),
+          },
+          {
+            path: ":publicationId",
+            component: PublicationComponent,
           },
           {
             path: "session/:sessionId",

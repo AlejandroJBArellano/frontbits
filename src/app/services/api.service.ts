@@ -1,8 +1,10 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 
+import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
 import { IHabit } from "../interfaces/habits";
+import { IPublication } from "../interfaces/publication";
 import { IUser } from "../interfaces/user";
 import { AppCheckService } from "./app-check.service";
 
@@ -66,12 +68,15 @@ export class ApiService {
       headers: this.headers,
     });
   }
-  UserPublication(id: string) {
-    const params = new HttpParams().set("id", id);
-    return this.http.get(this.concatenateUrl("/user/publication/"), {
-      params,
-      headers: this.headers,
-    });
+  UserPublication(id: string): Observable<IPublication> {
+    const params = new HttpParams().set("pid", id);
+    return this.http.get<IPublication>(
+      this.concatenateUrl("/user/publication"),
+      {
+        params,
+        headers: this.headers,
+      }
+    );
   }
   UserHabit(id: string) {
     const params = new HttpParams().set("id", id);
@@ -115,25 +120,29 @@ export class ApiService {
   }
 
   UpdatePublication(publication: any) {
-    const params = new HttpParams().set("id", publication.id);
-    return this.http.put(this.concatenateUrl("/publication"), publication, {
-      params,
-      headers: this.headers,
-    });
+    const params = new HttpParams().set("_id", publication._id);
+    return this.http
+      .put(this.concatenateUrl("/publication"), publication, {
+        params,
+        headers: this.headers,
+      })
+      .toPromise();
   }
   UpdateUser(user: any) {
-    const params = new HttpParams().set("id", user.id);
+    const params = new HttpParams().set("_id", user._id);
     return this.http.put(this.concatenateUrl("/user"), user, {
       params,
       headers: this.headers,
     });
   }
   UpdateHabit(habit: any) {
-    const params = new HttpParams().set("id", habit.id);
-    return this.http.put(this.concatenateUrl("/habit"), habit, {
-      params,
-      headers: this.headers,
-    });
+    const params = new HttpParams().set("_id", habit._id);
+    return this.http
+      .put(this.concatenateUrl("/habit"), habit, {
+        params,
+        headers: this.headers,
+      })
+      .toPromise();
   }
 
   DeletePublication(id: string) {

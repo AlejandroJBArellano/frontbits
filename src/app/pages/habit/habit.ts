@@ -2,6 +2,7 @@ import { Component } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { IHabit } from "../../interfaces/habits";
 import { ApiService } from "../../services/api.service";
+import { SupabaseService } from "../../services/supabase.service";
 import { LoadingService } from "../../services/ui/loading.service";
 
 @Component({
@@ -15,7 +16,8 @@ export class HabitPage {
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
-    public loadingService: LoadingService
+    public loadingService: LoadingService,
+    private supabaseService: SupabaseService
   ) {}
 
   ngOnInit() {
@@ -34,6 +36,14 @@ export class HabitPage {
     //   await fetch("http://localhost:3000/api/habits/63942339eb0c2d389c69fc2a")
     // ).json();
     this.habit = await this.apiService.GetHabit(this.habitId);
+    this.habit.urlImg = this.supabaseService.getPublicUrl(
+      this.habit.urlImg
+    ).data.publicUrl;
     await loader.dismiss();
+  }
+  renderPublicationImg(publication: any) {
+    publication.urlImg = this.supabaseService.getPublicUrl(
+      publication.urlImg
+    ).data.publicUrl;
   }
 }

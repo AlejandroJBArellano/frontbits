@@ -47,7 +47,7 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-list #scheduleList [hidden]="shownSessions === 0">
+  <ion-list #scheduleList>
     <ion-item-group *ngFor="let habit of habits">
       <!-- <ion-item-divider sticky>
         <ion-label>
