@@ -1,8 +1,10 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 
+import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
 import { IHabit } from "../interfaces/habits";
+import { IPublication } from "../interfaces/publication";
 import { IUser } from "../interfaces/user";
 import { AppCheckService } from "./app-check.service";
 
@@ -66,12 +68,15 @@ export class ApiService {
       headers: this.headers,
     });
   }
-  UserPublication(id: string) {
-    const params = new HttpParams().set("id", id);
-    return this.http.get(this.concatenateUrl("/user/publication/"), {
-      params,
-      headers: this.headers,
-    });
+  UserPublication(id: string): Observable<IPublication> {
+    const params = new HttpParams().set("pid", id);
+    return this.http.get<IPublication>(
+      this.concatenateUrl("/user/publication"),
+      {
+        params,
+        headers: this.headers,
+      }
+    );
   }
   UserHabit(id: string) {
     const params = new HttpParams().set("id", id);
