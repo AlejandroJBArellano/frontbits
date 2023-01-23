@@ -5,6 +5,7 @@ import { Camera, CameraResultType } from "@capacitor/camera";
 import { IUser } from "../../interfaces/user";
 import { UserData } from "../../providers/user-data";
 import { ApiService } from "../../services/api.service";
+import { ParseService } from "../../services/parse.service";
 import { SupabaseService } from "../../services/supabase.service";
 import { AlertService } from "../../services/ui/alert.service";
 import { LoadingService } from "../../services/ui/loading.service";
@@ -33,7 +34,8 @@ export class AccountPage implements AfterViewInit {
     private alertService: AlertService,
     private apiService: ApiService,
     private supabaseService: SupabaseService,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private parseService: ParseService
   ) {}
 
   async ngAfterViewInit() {
@@ -73,9 +75,15 @@ export class AccountPage implements AfterViewInit {
       inputs: [
         {
           type: "text",
+          name: "name",
+          value: this.user.name,
+          placeholder: "John Smith",
+        },
+        {
+          type: "text",
           name: "email",
-          value: this.email,
-          placeholder: "hello@gmail.com",
+          value: this.user.email,
+          placeholder: "john.smith@gmail.com",
         },
       ],
     });
@@ -83,10 +91,6 @@ export class AccountPage implements AfterViewInit {
 
   async getUsername() {
     this.email = await this.userData.getUsername();
-  }
-
-  changePassword() {
-    console.log("Clicked to change password");
   }
 
   logout() {
@@ -164,5 +168,46 @@ export class AccountPage implements AfterViewInit {
       format: "png",
       changed: false,
     };
+  }
+
+  public async changePassword() {
+    await this.alertService.presentAlert({
+      header: "Wait!",
+      message:
+        "Are you sure you want to change your password? A mail will be sent.",
+      buttons: [
+        {
+          text: "Accept",
+          handler: async () => {
+            const loader = await this.loadingService.presentLoading({
+              message: "Sending petition for change password!",
+            });
+            try {
+              await this.parseService.requestPasswordReset(this.user.email);
+              await loader.dismiss();
+              await this.alertService.presentAlert({
+                header: "Email Sent!",
+                buttons: [
+                  {
+                    text: "Perfect 😁!",
+                    role: "cancel",
+                  },
+                ],
+              });
+            } catch (error) {
+              await this.alertService.presentAlert({
+                header: "Error",
+                buttons: [
+                  {
+                    text: "An error happened trying to !",
+                    role: "cancel",
+                  },
+                ],
+              });
+            }
+          },
+        },
+      ],
+    });
   }
 }

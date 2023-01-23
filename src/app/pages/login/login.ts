@@ -41,7 +41,7 @@ export class LoginPage implements ViewWillEnter {
       this.router.navigateByUrl("/app/tabs/habits");
     } catch (error) {
       console.info(error);
-      this.alertService.presentAlert({
+      await this.alertService.presentAlert({
         header: "Error!",
         message: error,
         buttons: ["OK"],

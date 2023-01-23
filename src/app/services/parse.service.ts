@@ -51,4 +51,7 @@ export class ParseService {
       return Promise.reject(error);
     }
   }
+  public async requestPasswordReset(email: string) {
+    return await Parse.User.requestPasswordReset(email);
+  }
 }
